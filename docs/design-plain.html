@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>WaterMonitor — 水面垃圾智能识别系统 · 通俗版</title>
+<style>
+  :root {
+    --bg:#0A1628; --surface:#0f1f3a; --border:#1e3a5f;
+    --cyan:#00D4AA; --amber:#F0C040; --orange:#FF6B35;
+    --text:#e2e8f0; --text2:#94a3b8; --text3:#64748b;
+    --font:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{font-size:18px}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);overflow:hidden;height:100vh}
+  #app{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}
+  .slide{display:none;width:100%;height:100%;padding:40px 56px;overflow-y:auto;flex-direction:column;
+         animation:fadeIn .4s ease}
+  .slide.active{display:flex}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+  h1{font-size:2.6rem;font-weight:800;margin-bottom:.3em;
+     background:linear-gradient(135deg,var(--cyan),var(--emerald, #34d399));
+     -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  h2{font-size:1.8rem;font-weight:700;color:var(--cyan);margin-bottom:.5em;
+     border-left:4px solid var(--cyan);padding-left:14px}
+  h3{font-size:1.3rem;font-weight:600;margin-bottom:.4em}
+  p,li{font-size:1.05rem;line-height:1.8;color:var(--text2)}
+  strong{color:var(--text)}
+  .big{font-size:1.3rem;line-height:1.9}
+
+  .subtitle{font-size:1.1rem;color:var(--text3);margin-top:.3em}
+  .decor{width:80px;height:3px;background:var(--cyan);margin:.8em 0}
+  .cover{justify-content:center;align-items:flex-start;text-align:left}
+  .cover h1{font-size:3.2rem}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px}
+  .card h3{margin-bottom:.3em}
+  .card-cyan{border-left:4px solid var(--cyan)}
+  .card-amber{border-left:4px solid var(--amber)}
+  .card-orange{border-left:4px solid var(--orange)}
+
+  .qa{margin:1em 0}
+  .qa .q{font-size:1.2rem;font-weight:700;color:var(--cyan);margin-bottom:.3em}
+  .qa .a{font-size:1.05rem;color:var(--text2);line-height:1.8;padding-left:16px;border-left:2px solid var(--border)}
+
+  .icon-big{font-size:3rem;text-align:center;margin-bottom:.3em}
+  .flow{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;margin:1em 0}
+  .flow-step{background:var(--surface);border:1px solid var(--border);border-radius:10px;
+             padding:20px 24px;text-align:center;min-width:140px}
+  .flow-step .num{font-size:2rem;font-weight:800;color:var(--cyan)}
+  .flow-step .label{font-size:1rem;font-weight:600;color:var(--text);margin-top:4px}
+  .flow-step .desc{font-size:.85rem;color:var(--text3);margin-top:4px}
+  .flow-arrow{font-size:1.8rem;color:var(--text3)}
+
+  img.diagram{width:100%;max-height:52vh;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin:.6em 0;background:var(--bg)}
+
+  .highlight{background:rgba(0,212,170,0.06);border:1px solid rgba(0,212,170,0.25);
+             border-radius:8px;padding:18px 22px;margin:.8em 0}
+
+  #nav{position:fixed;bottom:0;left:0;right:0;height:48px;
+       background:rgba(10,22,40,0.96);border-top:1px solid var(--border);
+       display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100}
+  #nav button{background:none;border:1px solid var(--border);color:var(--text2);
+              padding:8px 22px;border-radius:8px;cursor:pointer;font-size:.9rem;
+              font-family:var(--font);transition:.15s}
+  #nav button:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,170,0.08)}
+  #nav button:disabled{opacity:.3;cursor:default}
+  #counter{font-size:.9rem;color:var(--text3)}
+
+  @media(max-width:800px){
+    .slide{padding:28px 20px}
+    h1{font-size:1.8rem}h2{font-size:1.4rem}
+    .grid-2,.grid-3{grid-template-columns:1fr}
+  }
+  @media print{
+    body{overflow:visible}
+    .slide{display:block!important;page-break-after:always;padding:30px 36px;overflow:visible}
+    #nav{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+<!-- ====== 0. 封面 ====== -->
+<div class="slide active cover">
+  <div style="max-width:900px">
+    <h1>WaterMonitor</h1>
+    <div class="subtitle" style="font-size:1.3rem;color:var(--text2)">
+      无人机拍一张照片 → 自动找出水面垃圾在哪 → 在地图上标出来
+    </div>
+    <div class="decor"></div>
+    <p class="big" style="margin-top:.5em">
+      这是一个装在 Windows 电脑上的软件。<br>
+      就像 Photoshop 一样，打开就能用，不需要联网。
+    </p>
+    <p style="margin-top:1.5em;color:var(--text3)">
+      长江勘测规划设计有限责任公司 · 水环院<br>2026年5月
+    </p>
+  </div>
+</div>
+
+<!-- ====== 1. 这是什么 ====== -->
+<div class="slide">
+  <h2>这个软件是做什么的？</h2>
+
+  <div class="qa">
+    <div class="q">一句话说清楚</div>
+    <div class="a">无人机沿着河道飞一圈，拍一堆照片回来。把照片导入这个软件，它自动帮你找出水面上哪里有垃圾，并且在地图上标注位置。</div>
+  </div>
+
+  <div class="qa">
+    <div class="q">以前怎么做？</div>
+    <div class="a">工作人员走路或坐船巡河，拿相机拍了照片，回来对着屏幕一张一张看，手动记录哪里有垃圾。一条河可能要花一整天。</div>
+  </div>
+
+  <div class="qa">
+    <div class="q">用了这个软件之后呢？</div>
+    <div class="a">把照片拖进去，点一下"开始检测"，几分钟后所有垃圾位置全部标好。你只需要检查确认一下，然后一键导出成地图文件，发给清理人员。</div>
+  </div>
+</div>
+
+<!-- ====== 2. 需要什么设备 ====== -->
+<div class="slide">
+  <h2>需要什么设备？</h2>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="icon-big">💻</div>
+      <h3>一台 Windows 电脑</h3>
+      <p>
+        普通的台式机或笔记本都行<br>
+        要求：有一块 NVIDIA 独立显卡<br>
+        推荐：RTX 3060 / 3070 或更好<br>
+        <span style="color:var(--text3);font-size:.9rem">（简单理解：游戏本或设计用电脑的配置就够）</span>
+      </p>
+    </div>
+    <div class="card card-amber">
+      <div class="icon-big">🚁</div>
+      <h3>一架无人机</h3>
+      <p>
+        大疆或其他品牌都行<br>
+        带可见光相机即可<br>
+        不需要红外、不需要多光谱<br>
+        <span style="color:var(--text3);font-size:.9rem">（其实就是拍普通高清照片的无人机）</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top:1em">
+    <p><strong>不需要买服务器，不需要联网，不需要云端账号。</strong>就跟你装一个 Photoshop 一样，一台电脑搞定。</p>
+  </div>
+</div>
+
+<!-- ====== 3. 部署方式 ====== -->
+<div class="slide">
+  <h2>部署方式：装在哪、怎么装</h2>
+
+  <div class="card card-cyan" style="margin-bottom:1em">
+    <h3>📍 本地部署 — 装在你自己的电脑上</h3>
+    <p>
+      就像安装普通软件一样：拿到一个安装包（Setup.exe），双击，选择安装位置，下一步下一步，装完桌面出现图标。双击打开直接能用。<br><br>
+      <strong>不需要 Python、不需要配置环境、不需要命令行。</strong>所有东西都打包好了。
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-amber">
+      <h3>✅ 本地部署的好处</h3>
+      <ul style="padding-left:1.2em">
+        <li>数据不出电脑，<strong>保密安全</strong></li>
+        <li>不需要网络也能用</li>
+        <li>一次安装，永久使用</li>
+        <li>处理速度不受网速影响</li>
+      </ul>
+    </div>
+    <div class="card" style="border:1px solid var(--border)">
+      <h3>❌ 不需要这样</h3>
+      <ul style="padding-left:1.2em">
+        <li>不需要买云服务器</li>
+        <li>不需要注册账号</li>
+        <li>不需要按月付费</li>
+        <li>不需要把照片传到网上</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 4. 工作方式 ====== -->
+<div class="slide">
+  <h2>工作方式：从照片到结果，分四步</h2>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="num">①</div>
+      <div class="label">导入照片</div>
+      <div class="desc">把无人机拍的照片<br>拖进软件窗口</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="num">②</div>
+      <div class="label">AI 自动识别</div>
+      <div class="desc">软件自动分析每张照片<br>找出所有垃圾并画框</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="num">③</div>
+      <div class="label">人工快速复核</div>
+      <div class="desc">浏览结果，确认或修正<br>（只花几分钟）</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="num">④</div>
+      <div class="label">导出地图文件</div>
+      <div class="desc">一键导出标注地图<br>发给清理人员</div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <p><strong>简单类比：</strong>就像用"以图搜图"功能，只不过它不是找相似的图片，而是在照片里找垃圾。找到后还把位置标在地图上。</p>
+  </div>
+</div>
+
+<!-- ====== 5. AI怎么识别 ====== -->
+<div class="slide">
+  <h2>它是怎么"认出"垃圾的？</h2>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <h3>📚 先"学习"</h3>
+      <p>
+        我们给它看了几十张水面垃圾的照片，每张照片里面垃圾在哪我们都帮它圈出来了。AI 通过学习这些例子，自己总结出"什么样的东西是水面垃圾"。
+      </p>
+      <p style="color:var(--text3);font-size:.9rem;margin-top:.5em">
+        类似教小孩认东西：指给他看"这是瓶子、那是泡沫"，看多了他就认识了。
+      </p>
+    </div>
+    <div class="card card-amber">
+      <h3>🔍 再"工作"</h3>
+      <p>
+        学会之后，给它一张从来没见过的照片，它就能自己找出："这张照片的这里、这里和这里有垃圾"，同时给出把握有多大。
+      </p>
+      <p style="color:var(--text3);font-size:.9rem;margin-top:.5em">
+        每次你确认或修正它的判断，它会变得更好。用得越多越聪明。
+      </p>
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top:1em">
+    <p><strong>能让它越来越准吗？</strong>能。你在日常使用中每次确认或修正检测结果，系统自动积累经验。积累到一定量后，点一下"更新模型"，它就比以前更准了。这是全自动的。</p>
+  </div>
+</div>
+
+<!-- ====== 6. 怎么知道位置 ====== -->
+<div class="slide">
+  <h2>怎么知道垃圾的准确位置？</h2>
+
+  <div class="qa">
+    <div class="q">原理很简单</div>
+    <div class="a">
+      无人机拍照时，相机会自动记录 GPS 位置（经度、纬度、高度）。软件读取这个信息，再结合相机参数，计算出照片里每个像素对应地面上哪个点。<br><br>
+      <strong>精度：</strong>通常误差在 1~3 米以内，对找水上垃圾来说完全够用。
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="q">最终输出的是什么？</div>
+    <div class="a">
+      一个标准地图文件（GeoJSON），可以直接在 GIS 软件（ArcGIS、QGIS）里打开。上面标注了每个垃圾的位置、大小、发现时间。就像在地图上插了大头针。
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="q">坐标系能用国内的 CGCS2000 吗？</div>
+    <div class="a">
+      能。软件专门适配了 CGCS2000（国家大地坐标系），输出的地图文件可以直接接入国内的 GIS 系统或天地图。
+    </div>
+  </div>
+</div>
+
+<!-- ====== 7. 软件长什么样 ====== -->
+<div class="slide">
+  <h2>软件用起来什么样？</h2>
+  <img class="diagram" src="diagrams/03-frontend-layout.svg" alt="软件界面" style="max-height:60vh">
+  <p style="font-size:.85rem;color:var(--text3);margin-top:.3em;text-align:center">界面设计预览：左边是照片+检测框，右边是结果列表+统计，底部是地图</p>
+</div>
+
+<!-- ====== 7b. 界面分区 ====== -->
+<div class="slide">
+  <h2>界面分为四个区域</h2>
+
+  <div class="grid-2" style="gap:24px">
+    <div class="card card-cyan">
+      <h3>📷 影像查看区 (最大区域)</h3>
+      <p>就像看图软件一样，显示无人机拍摄的高清照片。检测到的垃圾会被青色方框圈出来，旁边标注编号和可信度。</p>
+    </div>
+    <div class="card card-amber">
+      <h3>📋 检测结果列表 (右侧)</h3>
+      <p>所有找到的垃圾以列表形式显示。每条显示经纬度、大小、可信度。点哪条，照片和地图上对应位置跟着亮。</p>
+    </div>
+    <div class="card card-orange">
+      <h3>🗺 地图视图 (底部)</h3>
+      <p>所有垃圾点位撒在卫星地图上，一目了然哪些河段垃圾多、分布在哪。可以用天地图。</p>
+    </div>
+    <div class="card" style="border:1px solid var(--border)">
+      <h3>🎯 操作按钮区 (左侧栏)</h3>
+      <p>几个大按钮：导入照片 → 开始检测 → 复核结果 → 导出文件。按顺序点就行。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 8. 扩展 ====== -->
+<div class="slide">
+  <h2>以后能扩展吗？</h2>
+
+  <div class="qa">
+    <div class="q">现在只能识别垃圾？</div>
+    <div class="a">
+      对，第一个版本专注做水面漂浮垃圾识别。但软件架构已经预留好了扩展接口。
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="q">以后能加什么？</div>
+    <div class="a">
+      <div class="grid-2" style="margin-top:.5em">
+        <div class="card card-amber"><strong>蓝藻水华检测</strong><br>识别水面藻类爆发区域，计算面积</div>
+        <div class="card card-orange"><strong>排口溢流识别</strong><br>检测排污口是否有异常排放</div>
+        <div class="card card-cyan"><strong>岸线侵占监测</strong><br>识别河道岸线是否被违规占用</div>
+        <div class="card" style="border:1px solid var(--border)"><strong>水质参数反演</strong><br>通过多光谱数据推算水质指标</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="q">扩展难吗？</div>
+    <div class="a">
+      对开发人员来说很简单。新增一种检测能力只需要两步：(1) 准备一些标注照片训练 AI，(2) 在软件里注册一个新模块。不需要改动已有代码。就像给手机装一个新 App 一样，装上去就能用。
+    </div>
+  </div>
+</div>
+
+<!-- ====== 9. 数据安全 ====== -->
+<div class="slide">
+  <h2>数据安全与隐私</h2>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="icon-big">🔒</div>
+      <h3>全部本地运行</h3>
+      <p>照片从不离开你的电脑。AI 模型在你自己的显卡上跑，不需要上传到任何服务器。</p>
+    </div>
+    <div class="card card-amber">
+      <div class="icon-big">🌐</div>
+      <h3>无需联网</h3>
+      <p>软件安装后完全离线可用。地图底图可以预先缓存，野外没有网络也能正常使用。</p>
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top:1em">
+    <p><strong>特别适合涉密项目。</strong>很多水利项目涉及敏感地理位置信息，这个软件数据不出电脑，完全符合保密要求。</p>
+  </div>
+</div>
+
+<!-- ====== 10. FAQ ====== -->
+<div class="slide">
+  <h2>常见问题 (FAQ)</h2>
+
+  <div class="qa"><div class="q">处理一张照片要多久？</div><div class="a">普通航拍照片（2000万像素），不到 1 秒。一张覆盖几平方公里的拼接影像，约 1 分钟。</div></div>
+  <div class="qa"><div class="q">电脑需要多好？</div><div class="a">最低：NVIDIA GTX 1060 (6GB 显存)。推荐：RTX 3070。普通游戏本就能跑。</div></div>
+  <div class="qa"><div class="q">准确率怎么样？</div><div class="a">起步阶段约 55%（能找出一半以上垃圾）。用一个月积累数据后约 78%。长期可达到 85% 以上。</div></div>
+  <div class="qa"><div class="q">能识别很小或很远的垃圾吗？</div><div class="a">取决于无人机飞行高度。100米高度、普通相机，能识别大约 30cm² 以上的目标。飞低一点能看更清楚。</div></div>
+  <div class="qa"><div class="q">支持什么格式的照片？</div><div class="a">JPEG（最常用）、TIFF、GeoTIFF（正射拼接影像）。市面所有无人机都支持。</div></div>
+  <div class="qa"><div class="q">能跟现有的 GIS 系统对接吗？</div><div class="a">能。输出标准 GeoJSON 格式，可以直接导入 ArcGIS、QGIS、天地图或任何支持 GeoJSON 的系统。</div></div>
+  <div class="qa"><div class="q">需要买软件许可吗？</div><div class="a">所有核心技术都是开源的。只需正常采购硬件（电脑+无人机），软件本身不涉及商业许可费。</div></div>
+</div>
+
+<!-- ====== 11. 总结 ====== -->
+<div class="slide cover">
+  <div style="max-width:900px">
+    <h1 style="font-size:2.4rem">一句话总结</h1>
+    <div class="decor"></div>
+    <p class="big" style="margin-top:.5em">
+      这是一个装在 Windows 电脑上的软件。<br>
+      把无人机拍的河道照片导进去 →<br>
+      它自动找出哪里有垃圾 →<br>
+      在地图上标好位置 →<br>
+      导出文件交给清理人员。
+    </p>
+    <div class="decor" style="margin-top:1.5em"></div>
+    <div class="grid-2" style="margin-top:1.5em">
+      <div><p>✅ 一台电脑就行</p></div>
+      <div><p>✅ 不需要联网</p></div>
+      <div><p>✅ 数据不出电脑</p></div>
+      <div><p>✅ 双击就能用</p></div>
+      <div><p>✅ 越用越聪明</p></div>
+      <div><p>✅ 可扩展新功能</p></div>
+    </div>
+    <p style="margin-top:2em;color:var(--text3)">
+      详细技术文档: princechow123.github.io/FirstCC/
+    </p>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- ====== NAV ====== -->
+<div id="nav">
+  <button id="prevBtn" onclick="change(-1)">⟨ 上一页</button>
+  <span id="counter">1 / 12</span>
+  <button id="nextBtn" onclick="change(1)">下一页 ⟩</button>
+</div>
+
+<script>
+let cur=0;const S=document.querySelectorAll('.slide'),T=S.length;
+function change(d){
+  S[cur].classList.remove('active');
+  cur=Math.max(0,Math.min(T-1,cur+d));
+  S[cur].classList.add('active');
+  document.getElementById('counter').textContent=`${cur+1} / ${T}`;
+  document.getElementById('prevBtn').disabled=cur===0;
+  document.getElementById('nextBtn').disabled=cur===T-1;
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();change(1)}
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();change(-1)}
+  if(e.key==='Home'){e.preventDefault();change(-cur)}
+  if(e.key==='End'){e.preventDefault();change(T-1-cur)}
+});
+let wt;document.addEventListener('wheel',e=>{
+  if(e.target.closest('pre'))return;
+  clearTimeout(wt);wt=setTimeout(()=>{if(Math.abs(e.deltaY)>30)change(e.deltaY>0?1:-1)},50);
+},{passive:true});
+let ts;document.addEventListener('touchstart',e=>{ts=e.touches[0].clientY});
+document.addEventListener('touchend',e=>{
+  const d=ts-e.changedTouches[0].clientY;
+  if(Math.abs(d)>50)change(d>0?1:-1);
+});
+change(0);
+</script>
+</body>
+</html>

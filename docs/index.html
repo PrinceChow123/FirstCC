@@ -1,2 +1,44 @@
 <!DOCTYPE html>
-<html><head><meta http-equiv="refresh" content="0;url=design-presentation.html"></head></html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>WaterMonitor — 无人机水面垃圾智能识别系统</title>
+<style>
+  :root { --bg:#0A1628; --surface:#0f1f3a; --border:#1e3a5f; --cyan:#00D4AA; --text:#e2e8f0; --text2:#94a3b8; --text3:#64748b }
+  * { margin:0; padding:0; box-sizing:border-box }
+  body { font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; display:flex; align-items:center; justify-content:center }
+  .container { max-width:700px; text-align:center; padding:40px }
+  h1 { font-size:2.4rem; font-weight:800; margin-bottom:.3em; background:linear-gradient(135deg,var(--cyan),#34d399); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text }
+  .subtitle { font-size:1.1rem; color:var(--text2); margin-bottom:2em }
+  .cards { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:2em }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:32px 24px; text-decoration:none; color:var(--text); transition:.2s; display:block }
+  .card:hover { border-color:var(--cyan); transform:translateY(-2px) }
+  .card .icon { font-size:2.5rem; margin-bottom:.5em }
+  .card h3 { font-size:1.2rem; margin-bottom:.3em } .card p { font-size:.9rem; color:var(--text2); line-height:1.5 }
+  .footer { margin-top:3em; font-size:.85rem; color:var(--text3) }
+  @media(max-width:600px){ .cards{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>WaterMonitor</h1>
+  <div class="subtitle">无人机水面垃圾智能识别系统 · 设计文档</div>
+  <div class="cards">
+    <a class="card" href="design-plain.html">
+      <div class="icon">📖</div>
+      <h3>通俗版</h3>
+      <p>面向非技术人员的介绍<br>回答"是什么、怎么用、需要什么"</p>
+    </a>
+    <a class="card" href="design-presentation.html">
+      <div class="icon">⚙️</div>
+      <h3>技术版</h3>
+      <p>完整技术设计文档<br>架构图、模型选型、代码方案</p>
+    </a>
+  </div>
+  <div class="footer">
+    长江勘测规划设计有限责任公司 · 水环院 · WaterMonitor v1.0 · 2026
+  </div>
+</div>
+</body>
+</html>
