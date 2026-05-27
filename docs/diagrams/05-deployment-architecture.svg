@@ -1,0 +1,186 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
+    <marker id="arrow-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee"/>
+    </marker>
+    <marker id="arrow-emerald" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#34d399"/>
+    </marker>
+    <marker id="arrow-violet" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrow-amber" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#fbbf24"/>
+    </marker>
+    <linearGradient id="grad-deploy" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+  </defs>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap');
+    text { font-family: 'JetBrains Mono', 'Noto Sans SC', 'PingFang SC', sans-serif; }
+  </style>
+
+  <rect width="1000" height="800" fill="#0f172a"/>
+  <rect width="1000" height="800" fill="url(#grid)"/>
+
+  <text x="30" y="35" fill="#22d3ee" font-size="18" font-weight="700">WaterMonitor — Windows 开发与部署架构</text>
+  <text x="30" y="55" fill="#64748b" font-size="10">由开发环境到单文件安装包 · 桌面端完整交付</text>
+
+  <!-- ====== Left: Dev ====== -->
+  <rect x="30" y="75" width="450" height="700" rx="8" fill="none" stroke="#fbbf24" stroke-width="1" stroke-dasharray="6,3" opacity="0.5"/>
+  <text x="42" y="93" fill="#fbbf24" font-size="10" font-weight="600">DEVELOPMENT · 开发环境</text>
+
+  <!-- Dev tree -->
+  <rect x="50" y="108" width="410" height="250" rx="6" fill="rgba(15,23,42,0.8)" stroke="#1e293b" stroke-width="1"/>
+
+  <text x="65" y="128" fill="#94a3b8" font-size="9" font-weight="600">项目目录结构</text>
+
+  <text x="65" y="150" fill="#64748b" font-size="8">WaterMonitor/</text>
+  <text x="80" y="165" fill="#22d3ee" font-size="8">├── frontend/          </text><text x="270" y="165" fill="#64748b" font-size="7">Vue 3 + Vite + Element Plus + Leaflet</text>
+  <text x="80" y="180" fill="#22d3ee" font-size="8">├── electron/          </text><text x="270" y="180" fill="#64748b" font-size="7">主进程 · 窗口管理 · 子进程控制</text>
+  <text x="80" y="195" fill="#34d399" font-size="8">├── python_service/    </text><text x="270" y="195" fill="#64748b" font-size="7">FastAPI · Grounding DINO · 推理服务</text>
+  <text x="95" y="210" fill="#64748b" font-size="7">├── models/            </text><text x="270" y="210" fill="#64748b" font-size="7">预训练权重 + LoRA adapters</text>
+  <text x="95" y="225" fill="#64748b" font-size="7">├── inference_server.py</text>
+  <text x="95" y="240" fill="#64748b" font-size="7">└── requirements.txt</text>
+  <text x="80" y="258" fill="#a78bfa" font-size="8">├── scripts/           </text><text x="270" y="258" fill="#64748b" font-size="7">setup.bat · dev.bat · build.bat</text>
+  <text x="80" y="273" fill="#64748b" font-size="8">└── package.json</text>
+
+  <rect x="50" y="275" width="195" height="12" rx="2" fill="#1e293b"/>
+  <text x="147" y="284" fill="#334155" font-size="6" text-anchor="middle">git clone → setup.bat → dev.bat</text>
+
+  <!-- Dev setup steps -->
+  <rect x="50" y="370" width="410" height="180" rx="6" fill="rgba(15,23,42,0.8)" stroke="#1e293b" stroke-width="1"/>
+  <text x="65" y="392" fill="#94a3b8" font-size="9" font-weight="600">开发环境搭建 (一次性)</text>
+
+  <rect x="65" y="405" width="380" height="28" rx="4" fill="rgba(30,41,59,0.5)" stroke="#64748b" stroke-width="0.5"/>
+  <text x="75" y="423" fill="#94a3b8" font-size="8">1. Node.js 20+ LTS · Python 3.11 · CUDA 12.x</text>
+
+  <rect x="65" y="440" width="380" height="28" rx="4" fill="rgba(30,41,59,0.5)" stroke="#64748b" stroke-width="0.5"/>
+  <text x="75" y="458" fill="#94a3b8" font-size="8">2. git clone + scripts\setup.bat (一键安装)</text>
+
+  <rect x="65" y="475" width="380" height="28" rx="4" fill="rgba(30,41,59,0.5)" stroke="#64748b" stroke-width="0.5"/>
+  <text x="75" y="493" fill="#94a3b8" font-size="8">3. scripts\dev.bat (启动前端 + Python 推理)</text>
+
+  <rect x="65" y="510" width="380" height="28" rx="4" fill="rgba(30,41,59,0.5)" stroke="#64748b" stroke-width="0.5"/>
+  <text x="75" y="528" fill="#94a3b8" font-size="8">4. localhost:5173 (Vite HMR) + localhost:8765 (API)</text>
+
+  <!-- Dev → Build arrow -->
+  <line x1="255" y1="570" x2="255" y2="610" stroke="#34d399" stroke-width="3" marker-end="url(#arrow-emerald)"/>
+  <text x="280" y="595" fill="#34d399" font-size="9" font-weight="600">build.bat</text>
+
+  <!-- Build process -->
+  <rect x="50" y="615" width="410" height="145" rx="6" fill="rgba(15,23,42,0.8)" stroke="#1e293b" stroke-width="1"/>
+  <text x="65" y="637" fill="#94a3b8" font-size="9" font-weight="600">构建流程</text>
+
+  <rect x="65" y="650" width="120" height="35" rx="4" fill="rgba(30,41,59,0.5)" stroke="#64748b" stroke-width="0.5"/>
+  <text x="125" y="672" fill="#94a3b8" font-size="9" text-anchor="middle">Vite build</text>
+
+  <text x="200" y="672" fill="#64748b" font-size="12">→</text>
+
+  <rect x="220" y="650" width="120" height="35" rx="4" fill="rgba(30,41,59,0.5)" stroke="#64748b" stroke-width="0.5"/>
+  <text x="280" y="672" fill="#94a3b8" font-size="9" text-anchor="middle">PyInstaller</text>
+
+  <text x="355" y="672" fill="#64748b" font-size="12">→</text>
+
+  <rect x="370" y="650" width="75" height="35" rx="4" fill="rgba(6,78,59,0.3)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="407" y="672" fill="#34d399" font-size="9" font-weight="700" text-anchor="middle">Setup.exe</text>
+
+  <text x="125" y="708" fill="#64748b" font-size="8" text-anchor="middle">前端打包</text>
+  <text x="280" y="708" fill="#64748b" font-size="8" text-anchor="middle">Python → 独立 exe</text>
+  <text x="407" y="708" fill="#64748b" font-size="8" text-anchor="middle">NSIS 封装</text>
+
+  <!-- Build stats -->
+  <rect x="65" y="700" width="120" height="45" rx="4" fill="rgba(30,41,59,0.3)" stroke="#1e293b" stroke-width="1"/>
+  <text x="125" y="720" fill="#a78bfa" font-size="8" font-weight="600" text-anchor="middle">electron-builder</text>
+  <text x="125" y="736" fill="#64748b" font-size="7" text-anchor="middle">app.asar (~50MB)</text>
+
+  <rect x="220" y="700" width="120" height="45" rx="4" fill="rgba(30,41,59,0.3)" stroke="#1e293b" stroke-width="1"/>
+  <text x="280" y="720" fill="#a78bfa" font-size="8" font-weight="600" text-anchor="middle">PyInstaller</text>
+  <text x="280" y="736" fill="#64748b" font-size="7" text-anchor="middle">python_service/</text>
+
+  <rect x="355" y="700" width="90" height="45" rx="4" fill="rgba(30,41,59,0.3)" stroke="#1e293b" stroke-width="1"/>
+  <text x="400" y="720" fill="#a78bfa" font-size="8" font-weight="600" text-anchor="middle">NSIS</text>
+  <text x="400" y="736" fill="#64748b" font-size="7" text-anchor="middle">Setup.exe</text>
+
+  <!-- ====== Right: Deploy ====== -->
+  <rect x="510" y="75" width="460" height="700" rx="8" fill="none" stroke="#22d3ee" stroke-width="1" stroke-dasharray="6,3" opacity="0.6"/>
+  <text x="522" y="93" fill="#22d3ee" font-size="10" font-weight="600">DEPLOYMENT · 用户交付</text>
+
+  <!-- Install flow -->
+  <rect x="530" y="108" width="420" height="240" rx="6" fill="rgba(15,23,42,0.8)" stroke="#1e293b" stroke-width="1"/>
+  <text x="545" y="128" fill="#94a3b8" font-size="9" font-weight="600">用户安装流程</text>
+
+  <rect x="545" y="142" width="390" height="40" rx="6" fill="rgba(8,51,68,0.2)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="565" y="160" fill="#22d3ee" font-size="10" font-weight="600">1. 双击 Setup.exe</text>
+  <text x="565" y="175" fill="#94a3b8" font-size="8">NSIS 标准安装向导 · 选择安装目录 · 创建桌面快捷方式</text>
+
+  <text x="740" y="192" fill="#22d3ee" font-size="14">↓</text>
+
+  <rect x="545" y="205" width="390" height="40" rx="6" fill="rgba(6,78,59,0.15)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="565" y="223" fill="#34d399" font-size="10" font-weight="600">2. 解压到 Program Files\WaterMonitor\</text>
+  <text x="565" y="238" fill="#94a3b8" font-size="8">内置 Python Runtime + 模型权重 + Electron 前端</text>
+
+  <text x="740" y="255" fill="#34d399" font-size="14">↓</text>
+
+  <rect x="545" y="268" width="390" height="40" rx="6" fill="rgba(76,29,149,0.15)" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="565" y="286" fill="#a78bfa" font-size="10" font-weight="600">3. 首次启动自动初始化</text>
+  <text x="565" y="301" fill="#94a3b8" font-size="8">检测 CUDA 环境 · 预热模型 · 启动推理子进程</text>
+
+  <text x="740" y="318" fill="#a78bfa" font-size="14">↓</text>
+
+  <rect x="545" y="328" width="390" height="12" rx="2" fill="rgba(0,212,170,0.15)"/>
+  <text x="740" y="337" fill="#00D4AA" font-size="7" text-anchor="middle">✨ 用户无需安装 Python / Node / CUDA · 开箱即用</text>
+
+  <!-- Installed structure -->
+  <rect x="530" y="370" width="420" height="200" rx="6" fill="rgba(15,23,42,0.8)" stroke="#1e293b" stroke-width="1"/>
+  <text x="545" y="392" fill="#94a3b8" font-size="9" font-weight="600">安装后目录结构 (C:\Program Files\WaterMonitor\)</text>
+
+  <rect x="545" y="405" width="390" height="140" rx="4" fill="rgba(10,22,40,0.6)" stroke="#1e293b" stroke-width="1"/>
+
+  <text x="555" y="422" fill="#22d3ee" font-size="8" font-weight="600">WaterMonitor.exe          </text><text x="800" y="422" fill="#64748b" font-size="7">← 桌面快捷方式</text>
+  <text x="555" y="438" fill="#64748b" font-size="7">├── resources/</text>
+  <text x="570" y="454" fill="#64748b" font-size="7">├── app.asar                    </text><text x="800" y="454" fill="#334155" font-size="7">前端打包文件</text>
+  <text x="570" y="470" fill="#34d399" font-size="7">├── python_runtime/             </text><text x="800" y="470" fill="#334155" font-size="7">Python 3.11 embedded</text>
+  <text x="585" y="486" fill="#64748b" font-size="7">├── python.exe</text>
+  <text x="585" y="502" fill="#64748b" font-size="7">├── Lib\site-packages\         </text><text x="800" y="502" fill="#334155" font-size="7">PyTorch · FastAPI · rasterio</text>
+  <text x="585" y="518" fill="#64748b" font-size="7">└── inference_server.exe       </text><text x="800" y="518" fill="#334155" font-size="7">PyInstaller 打包</text>
+  <text x="570" y="534" fill="#fbbf24" font-size="7">└── models\                    </text><text x="800" y="534" fill="#334155" font-size="7">~1.5GB 模型权重 · LoRA</text>
+  <text x="555" y="550" fill="#64748b" font-size="7">├── uninstall.exe</text>
+
+  <!-- Runtime -->
+  <rect x="530" y="590" width="420" height="170" rx="6" fill="rgba(15,23,42,0.8)" stroke="#1e293b" stroke-width="1"/>
+  <text x="545" y="612" fill="#94a3b8" font-size="9" font-weight="600">运行时进程模型</text>
+
+  <!-- Electron box -->
+  <rect x="550" y="628" width="180" height="55" rx="6" fill="#0f172a"/>
+  <rect x="550" y="628" width="180" height="55" rx="6" fill="rgba(8,51,68,0.25)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="640" y="651" fill="#22d3ee" font-size="10" font-weight="600" text-anchor="middle">Electron 主进程</text>
+  <text x="640" y="668" fill="#94a3b8" font-size="8" text-anchor="middle">IPC · 窗口管理 · 菜单</text>
+
+  <!-- spawn -->
+  <text x="740" y="655" fill="#64748b" font-size="14">→</text>
+  <text x="754" y="648" fill="#64748b" font-size="7">spawn</text>
+
+  <!-- Python box -->
+  <rect x="770" y="625" width="165" height="55" rx="6" fill="#0f172a"/>
+  <rect x="770" y="625" width="165" height="55" rx="6" fill="rgba(6,78,59,0.2)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="852" y="648" fill="#34d399" font-size="10" font-weight="600" text-anchor="middle">Python 子进程</text>
+  <text x="852" y="665" fill="#94a3b8" font-size="8" text-anchor="middle">FastAPI :8765 · CUDA</text>
+
+  <!-- Communication -->
+  <line x1="640" y1="683" x2="640" y2="710" stroke="#22d3ee" stroke-width="1" marker-end="url(#arrow-cyan)"/>
+  <line x1="852" y1="680" x2="852" y2="710" stroke="#34d399" stroke-width="1" marker-end="url(#arrow-emerald)"/>
+
+  <rect x="690" y="708" width="220" height="38" rx="4" fill="rgba(251,146,60,0.1)" stroke="#fb923c" stroke-width="1"/>
+  <text x="800" y="725" fill="#fb923c" font-size="9" font-weight="600" text-anchor="middle">localhost HTTP · JSON</text>
+  <text x="800" y="740" fill="#94a3b8" font-size="8" text-anchor="middle">POST /detect  ·  POST /train</text>
+
+  <!-- Version info -->
+  <text x="530" y="780" fill="#64748b" font-size="8">打包工具链: electron-builder + PyInstaller + NSIS  ·  目标文件大小: ~2.5GB  ·  支持 Windows 10/11</text>
+</svg>

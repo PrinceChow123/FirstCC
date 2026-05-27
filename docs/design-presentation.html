@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WaterMonitor — 无人机水面垃圾智能识别系统 · 设计文档 v1.0</title>
+<style>
+  :root {
+    --bg: #0A1628;
+    --surface: #0f1f3a;
+    --border: #1e3a5f;
+    --cyan: #00D4AA;
+    --amber: #F0C040;
+    --orange: #FF6B35;
+    --emerald: #34d399;
+    --violet: #a78bfa;
+    --rose: #fb7185;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --code-bg: #0d1b2e;
+    --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'SF Mono', monospace;
+    --font-sans: -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  /* ---- Slide Container ---- */
+  #app {
+    width: 100vw; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .slide {
+    display: none;
+    width: 100%; height: 100%;
+    padding: 48px 64px;
+    overflow-y: auto;
+    flex-direction: column;
+    animation: fadeIn 0.35s ease;
+  }
+  .slide.active { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---- Typography ---- */
+  h1 { font-size: 2.4rem; font-weight: 800; margin-bottom: .3em; background: linear-gradient(135deg, var(--cyan) 0%, var(--emerald) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  h2 { font-size: 1.7rem; font-weight: 700; color: var(--cyan); margin-bottom: .5em; border-left: 4px solid var(--cyan); padding-left: 14px; }
+  h3 { font-size: 1.2rem; font-weight: 600; color: var(--text); margin-bottom: .4em; }
+  p, li { font-size: 1rem; line-height: 1.75; color: var(--text2); }
+  li { margin-bottom: .25em; }
+  strong { color: var(--text); }
+  code { font-family: var(--font-mono); font-size: .88rem; background: var(--code-bg); padding: 2px 8px; border-radius: 4px; color: var(--cyan); }
+  pre { font-family: var(--font-mono); font-size: .8rem; background: var(--code-bg); padding: 18px 22px; border-radius: 8px; overflow-x: auto; line-height: 1.6; border: 1px solid var(--border); margin: .5em 0; color: #c9d1d9; }
+  pre .kw { color: #ff7b72; }
+  pre .fn { color: #d2a8ff; }
+  pre .str { color: #a5d6ff; }
+  pre .cm { color: #8b949e; font-style: italic; }
+  pre .num { color: #79c0ff; }
+  a { color: var(--cyan); }
+
+  /* ---- Components ---- */
+  .subtitle { font-size: 1rem; color: var(--text3); margin-top: .3em; }
+  .meta { font-size: .85rem; color: var(--text3); margin-top: 1.5em; }
+  table { border-collapse: collapse; width: 100%; margin: .8em 0; font-size: .92rem; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { color: var(--cyan); font-weight: 600; white-space: nowrap; }
+  td { color: var(--text2); }
+  tr:hover td { background: rgba(0,212,170,0.04); }
+  .badge { display: inline-block; padding: 2px 10px; border-radius:16px; font-size: .78rem; font-weight: 600; }
+  .badge-cyan { background: rgba(0,212,170,0.15); color: var(--cyan); }
+  .badge-amber { background: rgba(240,192,64,0.15); color: var(--amber); }
+  .badge-orange { background: rgba(255,107,53,0.15); color: var(--orange); }
+  .badge-violet { background: rgba(167,139,250,0.15); color: var(--violet); }
+  .badge-emerald { background: rgba(52,211,153,0.15); color: var(--emerald); }
+
+  img.diagram { width: 100%; max-height: 60vh; object-fit: contain; border-radius: 8px; border: 1px solid var(--border); margin: .8em 0; background: var(--bg); }
+
+  /* Grid layouts */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px; }
+  .card h3 { margin-bottom: .3em; }
+  .card-cyan { border-left: 3px solid var(--cyan); }
+  .card-amber { border-left: 3px solid var(--amber); }
+  .card-orange { border-left: 3px solid var(--orange); }
+  .card-violet { border-left: 3px solid var(--violet); }
+  .card-emerald { border-left: 3px solid var(--emerald); }
+
+  /* TOC */
+  .toc { columns: 2; column-gap: 40px; list-style: none; }
+  .toc li { break-inside: avoid; padding: 6px 0; border-bottom: 1px dashed var(--border); }
+  .toc li span { color: var(--cyan); font-weight: 700; margin-right: 8px; }
+
+  /* Architecture pipeline steps */
+  .pipeline { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 1em 0; }
+  .pipe-step { flex: 1; min-width: 150px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+  .pipe-step .num { font-size: 1.4rem; font-weight: 800; color: var(--cyan); }
+  .pipe-step .label { font-size: .9rem; color: var(--text); font-weight: 600; }
+  .pipe-step .detail { font-size: .78rem; color: var(--text3); margin-top: 4px; }
+  .pipe-arrow { color: var(--text3); font-size: 1.5rem; font-weight: bold; }
+
+  /* Highlight boxes */
+  .highlight-box { background: rgba(0,212,170,0.06); border: 1px solid rgba(0,212,170,0.25); border-radius: 8px; padding: 18px 22px; margin: .8em 0; }
+  .highlight-box.amber { background: rgba(240,192,64,0.06); border-color: rgba(240,192,64,0.25); }
+  .highlight-box.rose { background: rgba(251,113,133,0.06); border-color: rgba(251,113,133,0.25); }
+
+  /* Nav */
+  #nav { position: fixed; bottom: 0; left: 0; right: 0; height: 44px; background: rgba(10,22,40,0.95); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 100; backdrop-filter: blur(10px); }
+  #nav button { background: none; border: 1px solid var(--border); color: var(--text2); padding: 6px 18px; border-radius: 6px; cursor: pointer; font-size: .85rem; font-family: var(--font-sans); transition: all .15s; }
+  #nav button:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,212,170,0.08); }
+  #nav button:disabled { opacity: .3; cursor: default; }
+  #counter { font-size: .85rem; color: var(--text3); font-family: var(--font-mono); }
+
+  /* Print */
+  @media print {
+    body { overflow: visible; }
+    .slide { display: block !important; page-break-after: always; padding: 32px 40px; overflow: visible; }
+    #nav { display: none; }
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .slide { padding: 24px 20px; }
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.3rem; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .toc { columns: 1; }
+  }
+
+  /* Cover slide */
+  .cover { justify-content: center; align-items: flex-start; text-align: left; }
+  .cover h1 { font-size: 3rem; margin-bottom: .2em; }
+  .cover .tagline { font-size: 1.2rem; color: var(--text2); margin-bottom: .4em; }
+  .cover .decor { width: 80px; height: 3px; background: var(--cyan); margin: 1em 0; }
+</style>
+</head>
+<body>
+
+<div id="app">
+<!-- ====== SLIDES ====== -->
+
+<!-- 0: Cover -->
+<div class="slide active cover">
+  <div style="max-width:800px">
+    <span class="badge badge-cyan">设计文档 v1.0</span>
+    <span class="badge badge-violet" style="margin-left:8px">CGCS2000</span>
+    <h1 style="margin-top:.3em">WaterMonitor</h1>
+    <div class="tagline">无人机支撑城市水环境智慧监测 — 水面垃圾智能识别系统</div>
+    <div class="decor"></div>
+    <p style="font-size:1.05rem;margin-top:.5em">基于 Grounding DINO 1.5 + LoRA 微调 + Electron 桌面端<br>从航拍影像到 CGCS2000 GeoJSON 标注的完整解决方案</p>
+    <div class="meta">
+      长江勘测规划设计有限责任公司 · 水环院 · 空间公司<br>
+      2026-05-28 · PrinceChow
+    </div>
+  </div>
+</div>
+
+<!-- 1: TOC -->
+<div class="slide">
+  <h2>目录</h2>
+  <ul class="toc">
+    <li><span>1.</span> 项目背景与需求</li>
+    <li><span>2.</span> 总体架构</li>
+    <li><span>3.</span> 模型选型与推理</li>
+    <li><span>4.</span> Fine-tune 训练策略</li>
+    <li><span>5.</span> 地理定位计算 (CGCS2000)</li>
+    <li><span>6.</span> 检测流水线</li>
+    <li><span>7.</span> 前端设计 — "深海指挥舱"</li>
+    <li><span>8.</span> Windows 开发与部署</li>
+    <li><span>9.</span> 数据飞轮与持续改进</li>
+    <li><span>10.</span> 技术栈总览</li>
+    <li><span>11.</span> 里程碑计划</li>
+  </ul>
+</div>
+
+<!-- 2: 项目背景 -->
+<div class="slide">
+  <h2>1. 项目背景与需求</h2>
+
+  <div class="highlight-box">
+    <p style="margin:0"><strong>项目来源：</strong>《无人机支撑城市水环境智慧监测关键技术研究》—— 长江勘测规划设计有限责任公司自主创新项目，由水环院牵头，空间公司配合</p>
+  </div>
+
+  <h3 style="margin-top:1.2em">本方案聚焦 — 三大核心目标</h3>
+  <div class="grid-3" style="margin-top:.8em">
+    <div class="card card-cyan">
+      <div style="font-size:2rem;color:var(--cyan)">🔍</div>
+      <h3>识别</h3>
+      <p>从无人机高清栅格影像中自动检出水面漂浮垃圾，架构预留细粒度分类扩展</p>
+    </div>
+    <div class="card card-amber">
+      <div style="font-size:2rem;color:var(--amber)">📐</div>
+      <h3>标注</h3>
+      <p>边界框 + 中心锚点定位，在航拍影像上叠印检测框、ID、置信度</p>
+    </div>
+    <div class="card card-orange">
+      <div style="font-size:2rem;color:var(--orange)">📍</div>
+      <h3>定位</h3>
+      <p>像素坐标 → CGCS2000 地理坐标，输出标准 GeoJSON，可直接导入 QGIS/ArcGIS</p>
+    </div>
+  </div>
+
+  <div class="highlight-box amber" style="margin-top:1.2em">
+    <p style="margin:0"><strong>需求约束：</strong>
+      <span class="badge badge-cyan">后处理模式</span>
+      <span class="badge badge-amber">~50 张起步样本</span>
+      <span class="badge badge-violet">CGCS2000 坐标系</span>
+      <span class="badge badge-emerald">RTX 3070 8GB</span>
+      <span class="badge badge-orange">Windows 桌面端交付</span>
+    </p>
+  </div>
+</div>
+
+<!-- 3: 总体架构 -->
+<div class="slide">
+  <h2>2. 总体架构</h2>
+  <img class="diagram" src="diagrams/01-system-architecture.svg" alt="系统架构图" style="max-height:65vh">
+  <p style="font-size:.82rem;color:var(--text3);margin-top:.3em">五层流水线架构：输入 → 预处理 → GPU推理 → 后处理 → GeoJSON输出，由 Electron 桌面壳封装</p>
+</div>
+
+<!-- 3b: 架构面板 -->
+<div class="slide">
+  <h2>2. 架构分层说明</h2>
+  <div class="pipeline" style="flex-wrap:wrap">
+    <div class="pipe-step">
+      <div class="num">①</div>
+      <div class="label">输入层</div>
+      <div class="detail">JPEG+EXIF<br>GeoTIFF+TFW</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="num">②</div>
+      <div class="label">预处理层</div>
+      <div class="detail">DOM滑动窗口切块<br>EXIF GPS提取</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="num">③</div>
+      <div class="label">推理层 (GPU)</div>
+      <div class="detail">Grounding DINO 1.5<br>FP16 · ~200ms/img</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="num">④</div>
+      <div class="label">后处理层</div>
+      <div class="detail">NMS · 去噪<br>像素→地理坐标</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="num">⑤</div>
+      <div class="label">输出层</div>
+      <div class="detail">GeoJSON<br>标注预览图</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:1.2em">进程模型</h3>
+  <pre>Electron 主进程 (main.js)
+  ├── Vue 3 渲染进程 (localhost:5173)
+  └── spawn → Python 子进程 (localhost:8765)
+               └── FastAPI + Grounding DINO + CUDA</pre>
+  <p style="font-size:.85rem;color:var(--text3)">Electron 退出时自动杀掉 Python 子进程，无需用户手动管理</p>
+</div>
+
+<!-- 4: 模型选型 -->
+<div class="slide">
+  <h2>3. 模型选型与推理</h2>
+  <h3>首选：Grounding DINO 1.5</h3>
+  <table>
+    <tr><th>指标</th><th>Grounding DINO 1.5</th><th>YOLO-World-v2 (备选)</th></tr>
+    <tr><td>开源协议</td><td><span class="badge badge-emerald">Apache 2.0</span></td><td><span class="badge badge-amber">GPL-3.0</span></td></tr>
+    <tr><td>权重大小</td><td>~340MB (swint_ogc)</td><td>~200MB (M)</td></tr>
+    <tr><td>显存占用 FP16</td><td>~2.5GB</td><td>~1.8GB</td></tr>
+    <tr><td>1024² 推理</td><td>~200ms</td><td>~120ms</td></tr>
+    <tr><td>Zero-shot 泛化</td><td>优秀 (航空视角)</td><td>良好</td></tr>
+    <tr><td>HF 原生支持</td><td>✅</td><td>需适配</td></tr>
+    <tr><td>LoRA 微调</td><td>PEFT 原生</td><td>部分支持</td></tr>
+  </table>
+  <p style="font-size:.85rem;color:var(--text3);margin-top:.5em"><strong>选型理由：</strong>航空视角 zero-shot 泛化优于 YOLO-World，HuggingFace 生态成熟，LoRA 工具链完善。RTX 3070 8GB 运行 FP16 推理绰绰有余。</p>
+</div>
+
+<!-- 4b: 模型推理代码 -->
+<div class="slide">
+  <h2>3. 推理调用 & API 接口</h2>
+  <pre><span class="kw">from</span> transformers <span class="kw">import</span> AutoProcessor, AutoModelForZeroShotObjectDetection
+
+model = AutoModelForZeroShotObjectDetection.from_pretrained(
+    <span class="str">"IDEA-Research/Grounding-DINO-1.5-API"</span>,
+    torch_dtype=torch.float16
+).to(<span class="str">"cuda"</span>)
+
+<span class="kw">def</span> <span class="fn">detect</span>(image_path):
+    inputs = processor(images=image,
+        text=<span class="str">"floating garbage . trash . debris on water surface"</span>,
+        return_tensors=<span class="str">"pt"</span>).to(<span class="str">"cuda"</span>)
+    <span class="kw">with</span> torch.no_grad(): outputs = model(**inputs)
+    <span class="kw">return</span> processor.post_process_grounded_object_detection(...)</pre>
+
+  <div class="grid-2" style="margin-top:1.2em">
+    <div class="card card-cyan">
+      <h3>POST /detect</h3>
+      <p style="font-size:.82rem">接收图像路径 → 推理 → 返回 JSON 检测列表；支持 confidence_threshold, output_format 参数</p>
+    </div>
+    <div class="card card-emerald">
+      <h3>POST /train</h3>
+      <p style="font-size:.82rem">接收 COCO 标注文件路径 → LoRA 增量训练 → 更新模型版本 → 返回 mAP 报告</p>
+    </div>
+  </div>
+</div>
+
+<!-- 5: Fine-tune -->
+<div class="slide">
+  <h2>4. Fine-tune 训练策略</h2>
+  <img class="diagram" src="diagrams/04-training-pipeline.svg" alt="训练流水线" style="max-height:57vh">
+
+  <div class="grid-4" style="margin-top:.5em; font-size:.82rem">
+    <div class="card card-amber"><strong>数据增强 ×20</strong><br>50 → ~1000张训练集</div>
+    <div class="card card-cyan"><strong>LoRA rank=16</strong><br>仅2M可训练参数</div>
+    <div class="card card-emerald"><strong>~15 min/epoch</strong><br>RTX 3070</div>
+    <div class="card card-violet"><strong>8MB adapter</strong><br>版本快照·一键回滚</div>
+  </div>
+</div>
+
+<!-- 5b: 数据增强细节 -->
+<div class="slide">
+  <h2>4. 数据增强 & 扩充路线</h2>
+  <table>
+    <tr><th>增强方式</th><th>参数</th><th>目的</th></tr>
+    <tr><td>随机旋转</td><td>±45°</td><td>多角度泛化</td></tr>
+    <tr><td>色彩抖动</td><td>亮度/对比度 ±30%</td><td>水体色调差异</td></tr>
+    <tr><td>缩放</td><td>0.5~1.5×</td><td>大小目标兼顾</td></tr>
+    <tr><td>Mosaic 拼接</td><td>4-in-1</td><td>小目标检测能力</td></tr>
+    <tr><td>水面反射模拟</td><td>高斯亮度噪声</td><td>反光/波浪干扰鲁棒</td></tr>
+  </table>
+
+  <h3 style="margin-top:1.2em">数据扩充路线图</h3>
+  <table>
+    <tr><th>阶段</th><th>样本量</th><th>来源</th><th>预期 mAP@0.5</th></tr>
+    <tr><td><span class="badge badge-cyan">Phase 1</span></td><td>50</td><td>当前标注 + 增强</td><td>~0.55</td></tr>
+    <tr><td><span class="badge badge-amber">Phase 2</span></td><td>120</td><td>+TACO 公开数据集</td><td>~0.68</td></tr>
+    <tr><td><span class="badge badge-orange">Phase 3</span></td><td>300</td><td>+人工复核积累</td><td>~0.78</td></tr>
+    <tr><td><span class="badge badge-emerald">Phase 4</span></td><td>500+</td><td>+GAN 合成罕见样本</td><td>~0.85</td></tr>
+  </table>
+</div>
+
+<!-- 6: 地理定位 -->
+<div class="slide">
+  <h2>5. 地理定位计算 (CGCS2000)</h2>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <h3>单张航拍照片</h3>
+      <p style="font-size:.85rem;line-height:1.6">
+        <code>GSD = (sensor × alt) / (focal × px)</code><br>
+        <code>dx_m = (cx - w/2) × GSD</code><br>
+        <code>lat = lat_drone + dy_m / 111320</code><br>
+        <code>lon = lon_drone + dx_m / (111320 × cos(lat))</code>
+      </p>
+      <p style="font-size:.78rem;color:var(--text3);margin-top:.5em">100m航高 + 8.8mm焦距 → GSD≈1.5cm/px<br>定位误差通常 &lt; 3m</p>
+    </div>
+    <div class="card card-violet">
+      <h3>DOM 正射影像</h3>
+      <p style="font-size:.85rem;line-height:1.6">
+        <code>rasterio.open(geotiff).xy(py, px)</code><br>
+        6参数仿射变换，内置坐标转换<br>定位精度通常 &lt; 1m
+      </p>
+      <p style="font-size:.78rem;color:var(--text3);margin-top:.5em">DOM 已经正射校正<br>EPSG:4490 直接输出</p>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="margin-top:1em">
+    <p style="margin:0"><strong>CGCS2000 适配：</strong>WGS84 与 CGCS2000 椭球差异 &lt; 0.1mm，经纬度偏差 &lt; 1cm（远小于检测定位误差 1~3m）。GPS 读出的坐标直接标注为 CGCS2000 即可。GeoJSON 头部声明 <code>EPSG:4490</code>。</p>
+  </div>
+</div>
+
+<!-- 7: 检测流水线 -->
+<div class="slide">
+  <h2>6. 检测流水线</h2>
+  <img class="diagram" src="diagrams/02-detection-pipeline.svg" alt="检测流水线" style="max-height:58vh">
+</div>
+
+<!-- 7b: 流水线参数 -->
+<div class="slide">
+  <h2>6. 后处理参数 & 性能估算</h2>
+
+  <table>
+    <tr><th>参数</th><th>默认值</th><th>说明</th></tr>
+    <tr><td>confidence_threshold</td><td>0.35</td><td>低于此值直接丢弃</td></tr>
+    <tr><td>auto_confirm_threshold</td><td>0.60</td><td>高于此值自动确认</td></tr>
+    <tr><td>review_range</td><td>0.35~0.60</td><td>此区间需人工复核</td></tr>
+    <tr><td>nms_iou_threshold</td><td>0.50</td><td>重叠框去重</td></tr>
+    <tr><td>min_area_m2</td><td>0.01</td><td>小于此面积视为噪点</td></tr>
+    <tr><td>overlap_px</td><td>256</td><td>DOM 切块重叠 (25%)</td></tr>
+  </table>
+
+  <h3 style="margin-top:1.2em">推理性能 (RTX 3070)</h3>
+  <table>
+    <tr><th>输入规模</th><th>切块数</th><th>推理时间</th><th>后处理</th><th>总时间</th></tr>
+    <tr><td>单张 5472×3648</td><td>1</td><td>~200ms</td><td>~10ms</td><td><strong>~0.2s</strong></td></tr>
+    <tr><td>DOM 5000×4000</td><td>~35</td><td>~7s</td><td>~1s</td><td><strong>~8s</strong></td></tr>
+    <tr><td>DOM 15000×12000</td><td>~270</td><td>~55s</td><td>~5s</td><td><strong>~60s</strong></td></tr>
+  </table>
+</div>
+
+<!-- 8: 前端设计 -->
+<div class="slide">
+  <h2>7. 前端设计 — "深海指挥舱"</h2>
+  <img class="diagram" src="diagrams/03-frontend-layout.svg" alt="前端布局" style="max-height:60vh">
+</div>
+
+<!-- 8b: 前端技术栈 -->
+<div class="slide">
+  <h2>7. 前端技术栈 & 插件机制</h2>
+
+  <table>
+    <tr><th>层</th><th>选型</th><th>理由</th></tr>
+    <tr><td>框架</td><td>Vue 3 + TypeScript</td><td>仓库起步技术，类型安全</td></tr>
+    <tr><td>UI 库</td><td>Element Plus</td><td>成熟中后台组件库</td></tr>
+    <tr><td>地图引擎</td><td>MapLibre GL JS</td><td>Apache 2.0，支持天地图 CGCS2000</td></tr>
+    <tr><td>图像查看</td><td>OpenSeadragon</td><td>10GB+ GeoTIFF 流畅缩放</td></tr>
+    <tr><td>图表</td><td>ECharts 5</td><td>数据看板统计图</td></tr>
+  </table>
+
+  <div class="highlight-box" style="margin-top:1em">
+    <p style="margin:0"><strong>插件扩展：</strong>新功能只需在 <code>features/</code> 目录新增模块并注册。如未来增加蓝藻检测：<br><code>pipeline.register(new AlgaeDetector('/models/lora_algae'))</code> — 不修改任何已有代码</p>
+  </div>
+</div>
+
+<!-- 8c: 性能指标 -->
+<div class="slide">
+  <h2>7. 前端性能指标</h2>
+
+  <div class="grid-3">
+    <div class="card card-cyan">
+      <div style="font-size:2.5rem;font-weight:800;color:var(--cyan)"><3s</div>
+      <h3>冷启动时间</h3>
+      <p style="font-size:.85rem">骨架屏 + 懒加载</p>
+    </div>
+    <div class="card card-emerald">
+      <div style="font-size:2.5rem;font-weight:800;color:var(--emerald)">5GB</div>
+      <h3>大图不卡</h3>
+      <p style="font-size:.85rem">金字塔瓦片服务</p>
+    </div>
+    <div class="card card-violet">
+      <div style="font-size:2.5rem;font-weight:800;color:var(--violet)">2000+</div>
+      <h3>列表无延迟</h3>
+      <p style="font-size:.85rem">虚拟滚动渲染</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:1.2em">三向联动交互</h3>
+  <pre>结果列表 ←→ 影像视图 (框高亮) ←→ 地图 (flyTo 点位)
+用户点击任一视图 → 其他两个同步响应</pre>
+</div>
+
+<!-- 9: 部署 -->
+<div class="slide">
+  <h2>8. Windows 开发与部署</h2>
+  <img class="diagram" src="diagrams/05-deployment-architecture.svg" alt="部署架构" style="max-height:58vh">
+</div>
+
+<!-- 9b: 部署细节 -->
+<div class="slide">
+  <h2>8. 开发流程 & 打包交付</h2>
+
+  <h3>开发环境搭建 (一次性)</h3>
+  <pre>C:\> git clone ...
+C:\> scripts\setup.bat    <span class="cm">← 一键安装所有依赖</span>
+C:\> scripts\dev.bat      <span class="cm">← 启动前端 + Python推理</span></pre>
+
+  <h3 style="margin-top:1.2em">打包构建 → Setup.exe</h3>
+  <pre>Vite build (前端)
+  + PyInstaller (Python → 独立exe)
+  + electron-builder
+  + NSIS 安装程序
+  = <strong>Setup.exe (~2.5GB)</strong></pre>
+
+  <h3 style="margin-top:1.2em">用户安装后效果</h3>
+  <pre><strong>C:\Program Files\WaterMonitor\</strong>
+  ├── WaterMonitor.exe          <span class="cm">← 桌面快捷方式</span>
+  ├── resources\
+  │   ├── app.asar              <span class="cm">前端打包 (~50MB)</span>
+  │   ├── python_runtime\       <span class="cm">Python 3.11 (~800MB)</span>
+  │   └── models\               <span class="cm">模型权重+LoRA (~1.5GB)</span>
+  └── uninstall.exe</pre>
+</div>
+
+<!-- 10: 数据飞轮 -->
+<div class="slide">
+  <h2>9. 数据飞轮与持续改进</h2>
+
+  <div class="highlight-box rose">
+    <h3 style="color:var(--rose)">飞轮闭环</h3>
+    <div class="pipeline">
+      <div class="pipe-step"><div class="label">模型检测</div><div class="detail">低置信→复核队列</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="label">人工复核</div><div class="detail">修正框=新标注</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="label">累积20张</div><div class="detail">触发LoRA更新</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="label">精度提升</div><div class="detail">更少人工复核</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:1.2em">
+    <div class="card card-orange">
+      <h3>主动学习</h3>
+      <p>低置信度 (0.35~0.60) 自动排入复核队列顶部，引导用户优先修正模型不确定的样本</p>
+    </div>
+    <div class="card card-violet">
+      <h3>版本管理</h3>
+      <p>每次 LoRA 更新自动版本快照 (v1.2.3·YYYYMMDD)，<br><code>models/lora_water_garbage/current →</code> 符号链接指向激活版本</p>
+    </div>
+  </div>
+</div>
+
+<!-- 11: 技术栈总览 -->
+<div class="slide">
+  <h2>10. 技术栈总览</h2>
+
+  <div class="highlight-box">
+    <p style="margin:0">全部开源 · 可本地部署 · 无需联网 · Windows 原生支持</p>
+  </div>
+
+  <table>
+    <tr><th>领域</th><th>技术</th><th>协议</th></tr>
+    <tr><td>前端框架</td><td>Vue 3 + TypeScript + Vite</td><td>MIT</td></tr>
+    <tr><td>桌面壳</td><td>Electron 30+</td><td>MIT</td></tr>
+    <tr><td>推理框架</td><td>PyTorch 2.x + HF Transformers</td><td>BSD/Apache 2.0</td></tr>
+    <tr><td>目标检测</td><td>Grounding DINO 1.5</td><td>Apache 2.0</td></tr>
+    <tr><td>微调框架</td><td>PEFT (LoRA)</td><td>Apache 2.0</td></tr>
+    <tr><td>API 服务</td><td>FastAPI + uvicorn</td><td>MIT</td></tr>
+    <tr><td>地理处理</td><td>rasterio + pyproj</td><td>BSD</td></tr>
+    <tr><td>地图引擎</td><td>MapLibre GL JS</td><td>Apache 2.0</td></tr>
+    <tr><td>打包</td><td>electron-builder + PyInstaller + NSIS</td><td>MIT</td></tr>
+  </table>
+</div>
+
+<!-- 12: 里程碑 -->
+<div class="slide">
+  <h2>11. 里程碑计划</h2>
+
+  <div class="highlight-box">
+    <p style="margin:0"><strong>总工期预估：~7 周 → v1.0 完整产品</strong></p>
+  </div>
+
+  <table>
+    <tr><th>#</th><th>里程碑</th><th>内容</th><th>工期</th><th>交付物</th></tr>
+    <tr><td><span class="badge badge-cyan">M1</span></td><td>基础设施</td><td>项目脚手架、Electron+Python IPC、基础UI</td><td>1周</td><td>可运行空白应用</td></tr>
+    <tr><td><span class="badge badge-emerald">M2</span></td><td>推理核心</td><td>Grounding DINO 加载、单图推理、API</td><td>1周</td><td>POST /detect 可用</td></tr>
+    <tr><td><span class="badge badge-violet">M3</span></td><td>坐标系统</td><td>EXIF解析、DOM仿射变换、GeoJSON</td><td>0.5周</td><td>坐标换算模块</td></tr>
+    <tr><td><span class="badge badge-amber">M4</span></td><td>前端集成</td><td>影像导入、结果展示、地图、三向联动</td><td>1.5周</td><td>完整交互闭环</td></tr>
+    <tr><td><span class="badge badge-orange">M5</span></td><td>复核导出</td><td>人工复核编辑器、GeoJSON/CSV导出</td><td>0.5周</td><td>完整交付能力</td></tr>
+    <tr><td><span class="badge badge-cyan">M6</span></td><td>训练管线</td><td>数据增强、LoRA微调脚本、版本管理</td><td>1周</td><td>可复现训练流程</td></tr>
+    <tr><td><span class="badge badge-emerald">M7</span></td><td>打包测试</td><td>electron-builder打包、Win10/11兼容</td><td>0.5周</td><td>Setup.exe</td></tr>
+    <tr><td><span class="badge badge-violet">M8</span></td><td>飞轮文档</td><td>主动学习、增量训练UI、用户手册</td><td>1周</td><td>完整产品 v1.0</td></tr>
+  </table>
+</div>
+
+<!-- 13: 结束页 -->
+<div class="slide cover">
+  <div style="max-width:800px">
+    <div class="decor"></div>
+    <h1 style="font-size:2.2rem">设计文档审阅完成</h1>
+    <p style="font-size:1.1rem;color:var(--text2)">
+      以上为 WaterMonitor v1.0 完整技术设计<br>
+      涵盖 11 个章节 + 5 张架构图 + 里程碑计划
+    </p>
+    <p style="font-size:1rem;color:var(--text3);margin-top:2em">
+      详细 Markdown 文档：<code>design/design-doc-v1.md</code><br>
+      下一步：审阅确认后进入 <strong>实现计划 (writing-plans)</strong> 阶段
+    </p>
+    <div class="decor" style="margin-top:2em"></div>
+    <p style="font-size:.85rem;color:var(--text3)">2026-05-28 · PrinceChow · WaterMonitor</p>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- ====== NAV BAR ====== -->
+<div id="nav">
+  <button id="prevBtn" onclick="changeSlide(-1)">⟨ 上一页</button>
+  <span id="counter">1 / 15</span>
+  <button id="nextBtn" onclick="changeSlide(1)">下一页 ⟩</button>
+</div>
+
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+
+function navigate(to) {
+  slides[current].classList.remove('active');
+  current = Math.max(0, Math.min(total - 1, to));
+  slides[current].classList.add('active');
+  document.getElementById('counter').textContent = `${current + 1} / ${total}`;
+  document.getElementById('prevBtn').disabled = current === 0;
+  document.getElementById('nextBtn').disabled = current === total - 1;
+}
+
+window.changeSlide = function(dir) {
+  navigate(current + dir);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); changeSlide(-1); }
+  if (e.key === 'Home') { e.preventDefault(); navigate(0); }
+  if (e.key === 'End') { e.preventDefault(); navigate(total - 1); }
+});
+
+// Mouse wheel navigation
+let wheelTimeout;
+document.addEventListener('wheel', e => {
+  if (e.target.closest('pre') || e.target.closest('.slide::-webkit-scrollbar')) return;
+  clearTimeout(wheelTimeout);
+  wheelTimeout = setTimeout(() => {
+    if (Math.abs(e.deltaY) > 30) changeSlide(e.deltaY > 0 ? 1 : -1);
+  }, 50);
+}, { passive: true });
+
+// Touch
+let touchStartY = 0;
+document.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; });
+document.addEventListener('touchend', e => {
+  const diff = touchStartY - e.changedTouches[0].clientY;
+  if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+});
+
+// Init
+navigate(0);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
+    <filter id="glow-cyan">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-amber">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="sidebar-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(8,51,68,0.6)"/>
+      <stop offset="100%" stop-color="rgba(8,51,68,0.2)"/>
+    </linearGradient>
+    <linearGradient id="accent-line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00D4AA"/>
+      <stop offset="100%" stop-color="#0A1628"/>
+    </linearGradient>
+  </defs>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&amp;display=swap');
+    text { font-family: 'JetBrains Mono', 'Noto Sans SC', 'PingFang SC', sans-serif; }
+  </style>
+
+  <rect width="1200" height="900" fill="#0f172a"/>
+  <rect width="1200" height="900" fill="url(#grid)"/>
+
+  <!-- Title bar -->
+  <rect x="0" y="0" width="1200" height="42" fill="rgba(10,22,40,0.95)" stroke="#00D4AA" stroke-width="0" opacity="0.9"/>
+  <text x="20" y="27" fill="#00D4AA" font-size="12" font-weight="700">▌ WaterMonitor v1.0</text>
+  <text x="1050" y="27" fill="#64748b" font-size="10" text-anchor="end">CGCS2000 · 2026-05-27 14:32:08</text>
+
+  <!-- Sidebar -->
+  <rect x="0" y="42" width="56" height="858" fill="rgba(10,22,40,0.95)"/>
+
+  <!-- Sidebar items -->
+  <rect x="8" y="60" width="40" height="40" rx="6" fill="rgba(0,212,170,0.15)" stroke="#00D4AA" stroke-width="1.5"/>
+  <text x="28" y="85" fill="#00D4AA" font-size="14" text-anchor="middle">📁</text>
+  <text x="28" y="108" fill="#64748b" font-size="7" text-anchor="middle">工作区</text>
+
+  <rect x="8" y="120" width="40" height="40" rx="6" fill="rgba(30,41,59,0.4)"/>
+  <text x="28" y="145" fill="#64748b" font-size="14" text-anchor="middle">🔍</text>
+  <text x="28" y="168" fill="#64748b" font-size="7" text-anchor="middle">检测</text>
+
+  <rect x="8" y="180" width="40" height="40" rx="6" fill="rgba(30,41,59,0.4)"/>
+  <text x="28" y="205" fill="#64748b" font-size="14" text-anchor="middle">🗺</text>
+  <text x="28" y="228" fill="#64748b" font-size="7" text-anchor="middle">地图</text>
+
+  <rect x="8" y="240" width="40" height="40" rx="6" fill="rgba(30,41,59,0.4)"/>
+  <text x="28" y="265" fill="#64748b" font-size="14" text-anchor="middle">✅</text>
+  <text x="28" y="288" fill="#64748b" font-size="7" text-anchor="middle">复核</text>
+
+  <rect x="8" y="300" width="40" height="40" rx="6" fill="rgba(30,41,59,0.4)"/>
+  <text x="28" y="325" fill="#64748b" font-size="14" text-anchor="middle">📤</text>
+  <text x="28" y="348" fill="#64748b" font-size="7" text-anchor="middle">导出</text>
+
+  <rect x="8" y="360" width="40" height="40" rx="6" fill="rgba(30,41,59,0.2)"/>
+  <text x="28" y="385" fill="#334155" font-size="14" text-anchor="middle">🧠</text>
+  <text x="28" y="408" fill="#334155" font-size="7" text-anchor="middle">训练</text>
+
+  <!-- Main content area -->
+  <!-- Image Viewport -->
+  <rect x="66" y="52" width="700" height="520" rx="8" fill="rgba(15,23,42,0.9)" stroke="#1e293b" stroke-width="1"/>
+  <text x="86" y="72" fill="#64748b" font-size="9">IMAGE VIEWPORT · 航拍正射影像</text>
+
+  <!-- Simulated water image with detection boxes -->
+  <rect x="86" y="82" width="660" height="470" rx="4" fill="rgba(6,60,80,0.3)"/>
+
+  <!-- Water texture simulation -->
+  <path d="M 86 250 Q 200 240 300 250 Q 400 260 500 250 Q 600 240 746 250" fill="none" stroke="rgba(34,211,238,0.08)" stroke-width="2"/>
+  <path d="M 86 300 Q 200 290 300 300 Q 400 310 500 300 Q 600 290 746 300" fill="none" stroke="rgba(34,211,238,0.06)" stroke-width="2"/>
+  <path d="M 86 350 Q 200 340 300 350 Q 400 360 500 350 Q 600 340 746 350" fill="none" stroke="rgba(34,211,238,0.08)" stroke-width="2"/>
+  <path d="M 86 430 Q 200 420 300 430 Q 400 440 500 430 Q 600 420 746 430" fill="none" stroke="rgba(34,211,238,0.05)" stroke-width="2"/>
+
+  <!-- Detection box 1 - high confidence -->
+  <rect x="200" y="280" width="85" height="50" rx="2" fill="rgba(0,212,170,0.1)" stroke="#00D4AA" stroke-width="2" filter="url(#glow-cyan)"/>
+  <rect x="200" y="280" width="65" height="18" rx="2" fill="#00D4AA"/>
+  <text x="232" y="293" fill="#0f172a" font-size="8" font-weight="700" text-anchor="middle">GC-001 0.92</text>
+  <line x1="242" y1="305" x2="242" y2="280" stroke="#00D4AA" stroke-width="0.5"/>
+
+  <!-- Detection box 2 - medium confidence -->
+  <rect x="500" y="350" width="65" height="40" rx="2" fill="rgba(240,192,64,0.1)" stroke="#F0C040" stroke-width="2"/>
+  <rect x="500" y="350" width="65" height="18" rx="2" fill="#F0C040"/>
+  <text x="532" y="363" fill="#0f172a" font-size="8" font-weight="700" text-anchor="middle">GC-002 0.58</text>
+
+  <!-- Detection box 3 - small -->
+  <rect x="420" y="440" width="40" height="28" rx="2" fill="rgba(0,212,170,0.1)" stroke="#00D4AA" stroke-width="2" filter="url(#glow-cyan)"/>
+  <rect x="420" y="440" width="50" height="14" rx="2" fill="#00D4AA"/>
+  <text x="445" y="451" fill="#0f172a" font-size="7" font-weight="700" text-anchor="middle">GC-003 0.81</text>
+
+  <!-- Grid overlay hint -->
+  <text x="690" y="540" fill="#334155" font-size="8" text-anchor="end">缩放: 75% · EPSG:4490</text>
+
+  <!-- Controls overlay -->
+  <rect x="86" y="82" width="660" height="24" rx="4" fill="rgba(10,22,40,0.8)"/>
+  <text x="96" y="98" fill="#64748b" font-size="8">[✓] 标注框   [✓] 热力图   [ ] 原图   [ ] DEM 叠加</text>
+
+  <!-- Right panel -->
+  <rect x="776" y="52" width="404" height="520" rx="8" fill="rgba(15,23,42,0.9)" stroke="#1e293b" stroke-width="1"/>
+  <text x="796" y="72" fill="#64748b" font-size="9">RESULT PANEL · 检测结果</text>
+
+  <!-- Result items -->
+  <rect x="796" y="85" width="364" height="60" rx="4" fill="rgba(0,212,170,0.08)" stroke="#00D4AA" stroke-width="1"/>
+  <circle cx="814" cy="105" r="5" fill="#00D4AA"/>
+  <text x="828" y="105" fill="#00D4AA" font-size="10" font-weight="700">GC-001</text>
+  <text x="1070" y="105" fill="#00D4AA" font-size="12" font-weight="700" text-anchor="end">0.92</text>
+  <text x="828" y="120" fill="#94a3b8" font-size="8">30.5928°N, 114.3052°E</text>
+  <text x="828" y="134" fill="#64748b" font-size="8">面积: ~2.3 m² · 漂浮垃圾</text>
+  <rect x="1080" y="95" width="65" height="22" rx="3" fill="rgba(0,212,170,0.2)" stroke="#00D4AA" stroke-width="0.5"/>
+  <text x="1112" y="110" fill="#00D4AA" font-size="8" font-weight="600" text-anchor="middle">确认</text>
+
+  <rect x="796" y="153" width="364" height="60" rx="4" fill="rgba(240,192,64,0.06)" stroke="#F0C040" stroke-width="1"/>
+  <circle cx="814" cy="173" r="5" fill="#F0C040"/>
+  <text x="828" y="173" fill="#F0C040" font-size="10" font-weight="700">GC-002</text>
+  <text x="1070" y="173" fill="#F0C040" font-size="12" font-weight="700" text-anchor="end">0.58</text>
+  <text x="828" y="188" fill="#94a3b8" font-size="8">30.5931°N, 114.3060°E</text>
+  <text x="828" y="202" fill="#64748b" font-size="8">置信度偏低 · 建议人工复核</text>
+  <rect x="1080" y="163" width="65" height="22" rx="3" fill="rgba(255,107,53,0.2)" stroke="#FF6B35" stroke-width="0.5"/>
+  <text x="1112" y="178" fill="#FF6B35" font-size="8" font-weight="600" text-anchor="middle">待复核</text>
+
+  <rect x="796" y="221" width="364" height="60" rx="4" fill="rgba(0,212,170,0.04)" stroke="#1e293b" stroke-width="1"/>
+  <circle cx="814" cy="241" r="5" fill="#00D4AA"/>
+  <text x="828" y="241" fill="#94a3b8" font-size="10" font-weight="700">GC-003</text>
+  <text x="1070" y="241" fill="#00D4AA" font-size="12" font-weight="700" text-anchor="end">0.81</text>
+  <text x="828" y="256" fill="#94a3b8" font-size="8">30.5921°N, 114.3072°E</text>
+  <text x="828" y="270" fill="#64748b" font-size="8">面积: ~1.1 m² · 漂浮垃圾</text>
+  <rect x="1080" y="231" width="65" height="22" rx="3" fill="rgba(0,212,170,0.2)" stroke="#00D4AA" stroke-width="0.5"/>
+  <text x="1112" y="246" fill="#00D4AA" font-size="8" font-weight="600" text-anchor="middle">确认</text>
+
+  <!-- More dummy items -->
+  <rect x="796" y="289" width="364" height="50" rx="4" fill="rgba(15,23,42,0.5)" stroke="#1e293b" stroke-width="1"/>
+  <text x="978" y="318" fill="#334155" font-size="7" text-anchor="middle">... 共 23 条检测结果 ...</text>
+
+  <!-- Stats summary -->
+  <rect x="796" y="350" width="364" height="80" rx="4" fill="rgba(15,23,42,0.6)" stroke="#1e293b" stroke-width="1"/>
+  <text x="816" y="372" fill="#64748b" font-size="9" font-weight="600">检测统计</text>
+  <text x="816" y="394" fill="#00D4AA" font-size="22" font-weight="700">23</text>
+  <text x="856" y="394" fill="#94a3b8" font-size="10">个垃圾目标</text>
+  <text x="816" y="415" fill="#F0C040" font-size="10" font-weight="600">5 个待复核</text>
+  <text x="920" y="415" fill="#64748b" font-size="9">· 平均置信度 0.76</text>
+
+  <!-- Map preview -->
+  <rect x="66" y="582" width="1114" height="200" rx="8" fill="rgba(15,23,42,0.9)" stroke="#1e293b" stroke-width="1"/>
+  <text x="86" y="602" fill="#64748b" font-size="9">MAP VIEW · 天地图 CGCS2000 (EPSG:4490)</text>
+
+  <!-- Simulated map -->
+  <rect x="86" y="612" width="1074" height="155" rx="4" fill="rgba(6,40,60,0.5)"/>
+
+  <!-- Water body on map -->
+  <path d="M 200 680 Q 400 670 550 690 Q 700 710 900 680 Q 1000 670 1100 690" fill="none" stroke="rgba(34,211,238,0.3)" stroke-width="20" stroke-linecap="round"/>
+  <path d="M 220 700 Q 400 695 550 710 Q 700 725 880 700 Q 980 690 1080 705" fill="none" stroke="rgba(34,211,238,0.15)" stroke-width="30" stroke-linecap="round"/>
+
+  <!-- Detection markers on map -->
+  <circle cx="350" cy="690" r="5" fill="#00D4AA" filter="url(#glow-cyan)"/>
+  <circle cx="350" cy="690" r="12" fill="none" stroke="#00D4AA" stroke-width="1" opacity="0.4"/>
+  <text x="350" y="675" fill="#00D4AA" font-size="7" text-anchor="middle">GC-001</text>
+
+  <circle cx="580" cy="710" r="5" fill="#F0C040"/>
+  <circle cx="580" cy="710" r="12" fill="none" stroke="#F0C040" stroke-width="1" opacity="0.4"/>
+  <text x="580" y="695" fill="#F0C040" font-size="7" text-anchor="middle">GC-002</text>
+
+  <circle cx="750" cy="695" r="5" fill="#00D4AA" filter="url(#glow-cyan)"/>
+  <circle cx="750" cy="695" r="12" fill="none" stroke="#00D4AA" stroke-width="1" opacity="0.4"/>
+  <text x="750" y="680" fill="#00D4AA" font-size="7" text-anchor="middle">GC-003</text>
+
+  <!-- Heatmap overlay hint -->
+  <text x="1090" y="755" fill="#334155" font-size="8" text-anchor="end">热力图已加载 · 天地图瓦片</text>
+
+  <!-- Bottom status bar -->
+  <rect x="66" y="792" width="1114" height="36" rx="6" fill="rgba(10,22,40,0.95)" stroke="#1e293b" stroke-width="1"/>
+
+  <text x="86" y="815" fill="#00D4AA" font-size="9" font-weight="600">● 就绪</text>
+  <rect x="160" y="803" width="1" height="14" fill="#1e293b"/>
+
+  <text x="175" y="815" fill="#94a3b8" font-size="9">任务队列: 0/142</text>
+  <rect x="310" y="803" width="1" height="14" fill="#1e293b"/>
+
+  <text x="325" y="815" fill="#94a3b8" font-size="9">GPU: NVIDIA RTX 3070 · 2.1GB / 8GB · 45°C</text>
+  <rect x="650" y="803" width="1" height="14" fill="#1e293b"/>
+
+  <text x="665" y="815" fill="#94a3b8" font-size="9">Python 推理服务: ● 运行中 (localhost:8765)</text>
+  <rect x="985" y="803" width="1" height="14" fill="#1e293b"/>
+
+  <text x="1000" y="815" fill="#64748b" font-size="9">CGCS2000 · 天地图 · v1.0</text>
+
+  <!-- Title label -->
+  <text x="86" y="845" fill="#64748b" font-size="8" font-weight="600">UI Layout — "深海指挥舱" · WaterMonitor v1.0 Alpha</text>
+</svg>
