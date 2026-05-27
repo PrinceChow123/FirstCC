@@ -1,206 +1,247 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 920">
   <defs>
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="rgba(30,41,59,0.4)" stroke-width="0.5"/>
+      <circle cx="0" cy="0" r="0.8" fill="rgba(30,41,59,0.6)"/>
     </pattern>
-    <marker id="arrow-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee"/>
-    </marker>
-    <marker id="arrow-emerald" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#34d399"/>
-    </marker>
-    <marker id="arrow-violet" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa"/>
-    </marker>
-    <marker id="arrow-amber" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#fbbf24"/>
-    </marker>
-    <marker id="arrow-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#fb923c"/>
-    </marker>
+    <pattern id="dot-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="0" cy="0" r="0.5" fill="rgba(30,41,59,0.3)"/>
+    </pattern>
     <filter id="glow-cyan">
       <feGaussianBlur stdDeviation="3" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-    <linearGradient id="grad-title" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#22d3ee"/>
-      <stop offset="100%" stop-color="#34d399"/>
+    <filter id="glow-emerald">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-amber">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <linearGradient id="g-title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00D4AA"/>
+      <stop offset="50%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#00D4AA"/>
     </linearGradient>
+    <linearGradient id="g-cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00D4AA"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="g-emerald" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="g-violet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="g-amber" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F0C040"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <marker id="ma-cyan" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#00D4AA"/>
+    </marker>
+    <marker id="ma-emerald" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#34d399"/>
+    </marker>
+    <marker id="ma-violet" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#a78bfa"/>
+    </marker>
+    <marker id="ma-amber" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#F0C040"/>
+    </marker>
+    <marker id="ma-orange" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#FF6B35"/>
+    </marker>
   </defs>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap');
     text { font-family: 'JetBrains Mono', 'Noto Sans SC', 'PingFang SC', sans-serif; }
   </style>
 
   <!-- Background -->
-  <rect width="1200" height="900" fill="#0f172a"/>
-  <rect width="1200" height="900" fill="url(#grid)"/>
+  <rect width="1200" height="920" fill="#0A1628"/>
+  <rect width="1200" height="920" fill="url(#grid)"/>
 
   <!-- Title -->
-  <text x="30" y="35" fill="url(#grad-title)" font-size="18" font-weight="700">WaterMonitor — 无人机水面垃圾智能识别系统架构</text>
-  <text x="30" y="55" fill="#64748b" font-size="10">系统总体架构 v1.0 · CGCS2000 坐标 · Grounding DINO + Electron + FastAPI</text>
+  <text x="36" y="38" fill="url(#g-title)" font-size="18" font-weight="700">WaterMonitor — System Architecture v1.0</text>
+  <text x="36" y="58" fill="#64748b" font-size="10">Five-Layer Pipeline: Input → Preprocess → GPU Inference → Postprocess → Output | CGCS2000 · Grounding DINO + LoRA</text>
+  <line x1="36" y1="66" x2="1164" y2="66" stroke="#1e3a5f" stroke-width="0.5"/>
 
-  <!-- ====== REGION: Electron Desktop App ====== -->
-  <rect x="20" y="75" width="1160" height="800" rx="12" fill="none" stroke="#22d3ee" stroke-width="1" stroke-dasharray="8,4" opacity="0.6"/>
-  <text x="32" y="93" fill="#22d3ee" font-size="10" font-weight="600">Electron Desktop Application (Windows)</text>
+  <!-- Electron Shell -->
+  <rect x="20" y="80" width="1160" height="810" rx="14" fill="none" stroke="rgba(0,212,170,0.25)" stroke-width="1" stroke-dasharray="8,4"/>
+  <rect x="26" y="74" width="180" height="16" rx="3" fill="#0A1628"/>
+  <text x="34" y="86" fill="#00D4AA" font-size="10" font-weight="600">Electron Desktop (Windows)</text>
 
-  <!-- ====== Row 1: 输入层 ====== -->
-  <rect x="40" y="110" width="1120" height="110" rx="8" fill="none" stroke="#fbbf24" stroke-width="1" stroke-dasharray="6,3" opacity="0.5"/>
-  <text x="52" y="128" fill="#fbbf24" font-size="9" font-weight="600">INPUT LAYER · 输入层</text>
+  <!-- L1: Input -->
+  <rect x="40" y="108" width="1120" height="108" rx="10" fill="none" stroke="rgba(240,192,64,0.2)" stroke-width="1" stroke-dasharray="6,3"/>
+  <rect x="48" y="102" width="150" height="16" rx="3" fill="#0A1628"/>
+  <text x="56" y="114" fill="#F0C040" font-size="10" font-weight="600">INPUT LAYER · 输入层</text>
 
-  <!-- Input boxes -->
-  <rect x="60" y="140" width="200" height="60" rx="6" fill="#0f172a"/>
-  <rect x="60" y="140" width="200" height="60" rx="6" fill="rgba(120,53,15,0.2)" stroke="#fbbf24" stroke-width="1.5"/>
-  <text x="160" y="162" fill="#fbbf24" font-size="12" font-weight="600" text-anchor="middle">航拍单张照片</text>
-  <text x="160" y="180" fill="#94a3b8" font-size="9" text-anchor="middle">JPEG + EXIF GPS</text>
-  <text x="160" y="193" fill="#64748b" font-size="8" text-anchor="middle">DJI / 飞马 / 纵横</text>
+  <rect x="58" y="130" width="220" height="68" rx="8" fill="#0A1628"/>
+  <rect x="58" y="130" width="220" height="68" rx="8" fill="rgba(240,192,64,0.08)" stroke="rgba(240,192,64,0.4)" stroke-width="1.5"/>
+  <text x="168" y="154" fill="#F0C040" font-size="12" font-weight="600" text-anchor="middle">航拍单张照片</text>
+  <text x="168" y="172" fill="#94a3b8" font-size="9" text-anchor="middle">JPEG + EXIF GPS</text>
+  <text x="168" y="188" fill="#64748b" font-size="8" text-anchor="middle">DJI / 飞马 / 纵横无人机</text>
 
-  <rect x="310" y="140" width="200" height="60" rx="6" fill="#0f172a"/>
-  <rect x="310" y="140" width="200" height="60" rx="6" fill="rgba(120,53,15,0.2)" stroke="#fbbf24" stroke-width="1.5"/>
-  <text x="410" y="162" fill="#fbbf24" font-size="12" font-weight="600" text-anchor="middle">DOM 正射影像</text>
-  <text x="410" y="180" fill="#94a3b8" font-size="9" text-anchor="middle">GeoTIFF + TFW</text>
-  <text x="410" y="193" fill="#64748b" font-size="8" text-anchor="middle">EPSG:4490 / CGCS2000</text>
+  <rect x="310" y="130" width="220" height="68" rx="8" fill="#0A1628"/>
+  <rect x="310" y="130" width="220" height="68" rx="8" fill="rgba(240,192,64,0.08)" stroke="rgba(240,192,64,0.4)" stroke-width="1.5"/>
+  <text x="420" y="154" fill="#F0C040" font-size="12" font-weight="600" text-anchor="middle">DOM 正射影像</text>
+  <text x="420" y="172" fill="#94a3b8" font-size="9" text-anchor="middle">GeoTIFF + TFW 世界文件</text>
+  <text x="420" y="188" fill="#64748b" font-size="8" text-anchor="middle">EPSG:4490 · CGCS2000 投影</text>
 
-  <rect x="560" y="140" width="200" height="60" rx="6" fill="#0f172a"/>
-  <rect x="560" y="140" width="200" height="60" rx="6" fill="rgba(120,53,15,0.2)" stroke="#fbbf24" stroke-width="1.5"/>
-  <text x="660" y="162" fill="#fbbf24" font-size="12" font-weight="600" text-anchor="middle">视频流 (未来)</text>
-  <text x="660" y="180" fill="#94a3b8" font-size="9" text-anchor="middle">RTSP / 5G 图传</text>
-  <text x="660" y="193" fill="#64748b" font-size="8" text-anchor="middle">Mavlink PX4</text>
+  <rect x="562" y="130" width="190" height="68" rx="8" fill="#0A1628"/>
+  <rect x="562" y="130" width="190" height="68" rx="8" fill="rgba(240,192,64,0.04)" stroke="rgba(240,192,64,0.2)" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="657" y="154" fill="#F0C040" font-size="11" font-weight="600" text-anchor="middle">视频流 (未来)</text>
+  <text x="657" y="172" fill="#94a3b8" font-size="9" text-anchor="middle">RTSP · 5G 图传</text>
+  <text x="657" y="188" fill="#64748b" font-size="8" text-anchor="middle">Mavlink PX4 飞控</text>
 
-  <rect x="840" y="140" width="300" height="60" rx="6" fill="#0f172a"/>
-  <rect x="840" y="140" width="300" height="60" rx="6" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="1.5"/>
-  <text x="990" y="162" fill="#94a3b8" font-size="12" font-weight="600" text-anchor="middle">标注数据库 (未来)</text>
-  <text x="990" y="180" fill="#94a3b8" font-size="9" text-anchor="middle">人工复核标注 · 模型版本管理</text>
-  <text x="990" y="193" fill="#64748b" font-size="8" text-anchor="middle">SQLite / PostgreSQL</text>
+  <rect x="784" y="130" width="360" height="68" rx="8" fill="#0A1628"/>
+  <rect x="784" y="130" width="360" height="68" rx="8" fill="rgba(148,163,184,0.04)" stroke="rgba(148,163,184,0.2)" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="964" y="154" fill="#94a3b8" font-size="11" font-weight="600" text-anchor="middle">标注数据库 (未来扩展)</text>
+  <text x="964" y="172" fill="#94a3b8" font-size="9" text-anchor="middle">人工复核记录 · 模型版本历史</text>
+  <text x="964" y="188" fill="#64748b" font-size="8" text-anchor="middle">SQLite 本地 / PostgreSQL 远程</text>
 
-  <!-- Arrows input → preprocess -->
-  <line x1="160" y1="200" x2="160" y2="245" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrow-amber)"/>
-  <line x1="410" y1="200" x2="410" y2="245" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrow-amber)"/>
+  <line x1="168" y1="198" x2="168" y2="248" stroke="#F0C040" stroke-width="2" marker-end="url(#ma-amber)" opacity="0.8"/>
+  <line x1="420" y1="198" x2="420" y2="248" stroke="#F0C040" stroke-width="2" marker-end="url(#ma-amber)" opacity="0.8"/>
 
-  <!-- ====== Row 2: 预处理层 ====== -->
-  <rect x="40" y="250" width="1120" height="100" rx="8" fill="none" stroke="#fb923c" stroke-width="1" stroke-dasharray="6,3" opacity="0.5"/>
-  <text x="52" y="268" fill="#fb923c" font-size="9" font-weight="600">PREPROCESSING LAYER · 预处理层</text>
+  <!-- L2: Preprocessing -->
+  <rect x="40" y="255" width="1120" height="98" rx="10" fill="none" stroke="rgba(255,107,53,0.2)" stroke-width="1" stroke-dasharray="6,3"/>
+  <rect x="48" y="249" width="185" height="16" rx="3" fill="#0A1628"/>
+  <text x="56" y="261" fill="#FF6B35" font-size="10" font-weight="600">PREPROCESSING LAYER · 预处理层</text>
 
-  <rect x="60" y="278" width="240" height="55" rx="6" fill="#0f172a"/>
-  <rect x="60" y="278" width="240" height="55" rx="6" fill="rgba(251,146,60,0.15)" stroke="#fb923c" stroke-width="1.5"/>
-  <text x="180" y="299" fill="#fb923c" font-size="11" font-weight="600" text-anchor="middle">EXIF 解析器</text>
-  <text x="180" y="316" fill="#94a3b8" font-size="9" text-anchor="middle">GPS · 相机姿态 · GSD 计算</text>
+  <rect x="58" y="275" width="240" height="58" rx="8" fill="#0A1628"/>
+  <rect x="58" y="275" width="240" height="58" rx="8" fill="rgba(255,107,53,0.08)" stroke="rgba(255,107,53,0.35)" stroke-width="1.5"/>
+  <text x="178" y="298" fill="#FF6B35" font-size="11" font-weight="600" text-anchor="middle">EXIF 元数据解析器</text>
+  <text x="178" y="316" fill="#94a3b8" font-size="9" text-anchor="middle">GPS 坐标 · 相机姿态 · GSD 计算</text>
 
-  <rect x="350" y="278" width="240" height="55" rx="6" fill="#0f172a"/>
-  <rect x="350" y="278" width="240" height="55" rx="6" fill="rgba(251,146,60,0.15)" stroke="#fb923c" stroke-width="1.5"/>
-  <text x="470" y="299" fill="#fb923c" font-size="11" font-weight="600" text-anchor="middle">DOM 滑动窗口切块</text>
-  <text x="470" y="316" fill="#94a3b8" font-size="9" text-anchor="middle">1024x1024 · overlap 256px</text>
+  <rect x="328" y="275" width="240" height="58" rx="8" fill="#0A1628"/>
+  <rect x="328" y="275" width="240" height="58" rx="8" fill="rgba(255,107,53,0.08)" stroke="rgba(255,107,53,0.35)" stroke-width="1.5"/>
+  <text x="448" y="298" fill="#FF6B35" font-size="11" font-weight="600" text-anchor="middle">DOM 滑动窗口切块</text>
+  <text x="448" y="316" fill="#94a3b8" font-size="9" text-anchor="middle">1024×1024 px · overlap = 256px</text>
 
-  <rect x="640" y="278" width="240" height="55" rx="6" fill="#0f172a"/>
-  <rect x="640" y="278" width="240" height="55" rx="6" fill="rgba(251,146,60,0.15)" stroke="#fb923c" stroke-width="1.5"/>
-  <text x="760" y="299" fill="#fb923c" font-size="11" font-weight="600" text-anchor="middle">地理参考提取</text>
-  <text x="760" y="316" fill="#94a3b8" font-size="9" text-anchor="middle">GeoTransform 6参数 · EPSG 解析</text>
+  <rect x="598" y="275" width="240" height="58" rx="8" fill="#0A1628"/>
+  <rect x="598" y="275" width="240" height="58" rx="8" fill="rgba(255,107,53,0.08)" stroke="rgba(255,107,53,0.35)" stroke-width="1.5"/>
+  <text x="718" y="298" fill="#FF6B35" font-size="11" font-weight="600" text-anchor="middle">地理参考提取</text>
+  <text x="718" y="316" fill="#94a3b8" font-size="9" text-anchor="middle">GeoTransform 6 参数 · EPSG 解析</text>
 
-  <rect x="930" y="278" width="210" height="55" rx="6" fill="#0f172a"/>
-  <rect x="930" y="278" width="210" height="55" rx="6" fill="rgba(251,146,60,0.15)" stroke="#fb923c" stroke-width="1.5"/>
-  <text x="1035" y="299" fill="#fb923c" font-size="11" font-weight="600" text-anchor="middle">图像标准化</text>
-  <text x="1035" y="316" fill="#94a3b8" font-size="9" text-anchor="middle">色彩归一化 · 尺寸缩放</text>
+  <rect x="868" y="275" width="270" height="58" rx="8" fill="#0A1628"/>
+  <rect x="868" y="275" width="270" height="58" rx="8" fill="rgba(255,107,53,0.08)" stroke="rgba(255,107,53,0.35)" stroke-width="1.5"/>
+  <text x="1003" y="298" fill="#FF6B35" font-size="11" font-weight="600" text-anchor="middle">图像标准化</text>
+  <text x="1003" y="316" fill="#94a3b8" font-size="9" text-anchor="middle">色彩归一化 · 尺寸缩放 · Tensor 组装</text>
 
-  <!-- Arrows preprocess → inference -->
-  <line x1="180" y1="333" x2="180" y2="390" stroke="#fb923c" stroke-width="2" marker-end="url(#arrow-orange)"/>
-  <line x1="470" y1="333" x2="470" y2="390" stroke="#fb923c" stroke-width="2" marker-end="url(#arrow-orange)"/>
-  <line x1="760" y1="333" x2="470" y2="390" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arrow-orange)"/>
-  <line x1="1035" y1="333" x2="470" y2="390" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arrow-orange)"/>
+  <line x1="448" y1="333" x2="448" y2="395" stroke="#FF6B35" stroke-width="2" marker-end="url(#ma-orange)" opacity="0.8"/>
+  <line x1="178" y1="333" x2="178" y2="360" stroke="#FF6B35" stroke-width="1" opacity="0.6"/>
+  <line x1="178" y1="360" x2="448" y2="360" stroke="#FF6B35" stroke-width="1" opacity="0.6"/>
+  <line x1="718" y1="333" x2="718" y2="360" stroke="#FF6B35" stroke-width="1" opacity="0.6"/>
+  <line x1="718" y1="360" x2="448" y2="360" stroke="#FF6B35" stroke-width="1" opacity="0.6"/>
+  <line x1="1003" y1="333" x2="1003" y2="360" stroke="#FF6B35" stroke-width="1" opacity="0.6"/>
+  <line x1="1003" y1="360" x2="448" y2="360" stroke="#FF6B35" stroke-width="1" opacity="0.6"/>
 
-  <!-- Preprocess to training data (side arrow) -->
-  <line x1="990" y1="278" x2="990" y2="170" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow-amber)"/>
-  <text x="1000" y="225" fill="#64748b" font-size="8">标注数据</text>
+  <!-- L3: Inference -->
+  <rect x="40" y="402" width="1120" height="130" rx="10" fill="none" stroke="rgba(52,211,153,0.25)" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <rect x="48" y="396" width="210" height="16" rx="3" fill="#0A1628"/>
+  <text x="56" y="408" fill="#34d399" font-size="10" font-weight="600">INFERENCE LAYER · GPU 推理层</text>
 
-  <!-- ====== Row 3: 推理层 (GPU) ====== -->
-  <rect x="40" y="395" width="1120" height="140" rx="8" fill="none" stroke="#34d399" stroke-width="1" stroke-dasharray="6,3" opacity="0.6"/>
-  <text x="52" y="413" fill="#34d399" font-size="9" font-weight="600">INFERENCE LAYER · 推理层 (CUDA GPU)</text>
+  <rect x="260" y="424" width="560" height="88" rx="10" fill="#0A1628"/>
+  <rect x="260" y="424" width="560" height="88" rx="10" fill="rgba(52,211,153,0.08)" stroke="rgba(52,211,153,0.5)" stroke-width="2" filter="url(#glow-emerald)"/>
+  <text x="540" y="450" fill="#34d399" font-size="14" font-weight="700" text-anchor="middle">Grounding DINO 1.5</text>
+  <text x="540" y="470" fill="#94a3b8" font-size="10" text-anchor="middle">swint_ogc backbone · ~340MB · FP16 精度推理</text>
+  <text x="540" y="488" fill="#64748b" font-size="9" text-anchor="middle">Text Prompt: "floating garbage . trash . debris on water surface"</text>
+  <text x="540" y="504" fill="#F0C040" font-size="9" text-anchor="middle">LoRA Adapter (~8MB) · rank=16 · alpha=32 · 可训练参数仅 2M</text>
 
-  <!-- Model box center -->
-  <rect x="320" y="428" width="500" height="90" rx="8" fill="#0f172a"/>
-  <rect x="320" y="428" width="500" height="90" rx="8" fill="rgba(6,78,59,0.3)" stroke="#34d399" stroke-width="2" filter="url(#glow-cyan)"/>
-  <text x="570" y="452" fill="#34d399" font-size="14" font-weight="700" text-anchor="middle">Grounding DINO 1.5</text>
-  <text x="570" y="472" fill="#94a3b8" font-size="10" text-anchor="middle">swint_ogc backbone · ~340MB · FP16 推理</text>
-  <text x="570" y="490" fill="#64748b" font-size="9" text-anchor="middle">prompt: "floating garbage . trash . debris on water surface"</text>
-  <text x="570" y="505" fill="#fbbf24" font-size="9" text-anchor="middle">LoRA Adapter (~8MB) · rank=16 · alpha=32</text>
+  <rect x="860" y="436" width="160" height="42" rx="6" fill="#0A1628"/>
+  <rect x="860" y="436" width="160" height="42" rx="6" fill="rgba(167,139,250,0.12)" stroke="rgba(167,139,250,0.4)" stroke-width="1.5"/>
+  <text x="940" y="456" fill="#a78bfa" font-size="10" font-weight="600" text-anchor="middle">NVIDIA RTX 3070</text>
+  <text x="940" y="471" fill="#64748b" font-size="8" text-anchor="middle">8GB VRAM · CUDA 12.x</text>
 
-  <!-- GPU label -->
-  <rect x="870" y="438" width="140" height="40" rx="4" fill="#0f172a"/>
-  <rect x="870" y="438" width="140" height="40" rx="4" fill="rgba(76,29,149,0.3)" stroke="#a78bfa" stroke-width="1.5"/>
-  <text x="940" y="463" fill="#a78bfa" font-size="10" font-weight="600" text-anchor="middle">RTX 3070 @ 8GB</text>
+  <line x1="448" y1="395" x2="448" y2="424" stroke="#34d399" stroke-width="2" marker-end="url(#ma-emerald)" opacity="0.8"/>
+  <line x1="820" y1="460" x2="860" y2="457" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#ma-violet)" opacity="0.7"/>
 
-  <!-- Arrows preprocess → model -->
-  <line x1="470" y1="390" x2="470" y2="428" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-emerald)"/>
+  <line x1="540" y1="512" x2="540" y2="562" stroke="#34d399" stroke-width="2" marker-end="url(#ma-emerald)" opacity="0.8"/>
 
-  <line x1="820" y1="473" x2="870" y2="458" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow-violet)"/>
+  <!-- L4: Post-processing -->
+  <rect x="40" y="569" width="1120" height="98" rx="10" fill="none" stroke="rgba(167,139,250,0.2)" stroke-width="1" stroke-dasharray="6,3"/>
+  <rect x="48" y="563" width="210" height="16" rx="3" fill="#0A1628"/>
+  <text x="56" y="575" fill="#a78bfa" font-size="10" font-weight="600">POSTPROCESSING LAYER · 后处理层</text>
 
-  <!-- Arrow to postprocess -->
-  <line x1="570" y1="518" x2="570" y2="560" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-emerald)"/>
+  <rect x="58" y="589" width="220" height="58" rx="8" fill="#0A1628"/>
+  <rect x="58" y="589" width="220" height="58" rx="8" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.35)" stroke-width="1.5"/>
+  <text x="168" y="612" fill="#a78bfa" font-size="11" font-weight="600" text-anchor="middle">重叠窗口 NMS</text>
+  <text x="168" y="630" fill="#94a3b8" font-size="9" text-anchor="middle">IoU > 0.50 → 合并去重</text>
 
-  <!-- ====== Row 4: 后处理层 ====== -->
-  <rect x="40" y="565" width="1120" height="100" rx="8" fill="none" stroke="#a78bfa" stroke-width="1" stroke-dasharray="6,3" opacity="0.5"/>
-  <text x="52" y="583" fill="#a78bfa" font-size="9" font-weight="600">POSTPROCESSING LAYER · 后处理层</text>
+  <rect x="308" y="589" width="220" height="58" rx="8" fill="#0A1628"/>
+  <rect x="308" y="589" width="220" height="58" rx="8" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.35)" stroke-width="1.5"/>
+  <text x="418" y="612" fill="#a78bfa" font-size="11" font-weight="600" text-anchor="middle">小目标去噪</text>
+  <text x="418" y="630" fill="#94a3b8" font-size="9" text-anchor="middle">面积 < 0.01 m² → 丢弃</text>
 
-  <rect x="60" y="595" width="200" height="50" rx="6" fill="#0f172a"/>
-  <rect x="60" y="595" width="200" height="50" rx="6" fill="rgba(76,29,149,0.15)" stroke="#a78bfa" stroke-width="1.5"/>
-  <text x="160" y="615" fill="#a78bfa" font-size="10" font-weight="600" text-anchor="middle">重叠 NMS</text>
-  <text x="160" y="632" fill="#94a3b8" font-size="9" text-anchor="middle">IoU &gt; 0.5 去重</text>
+  <rect x="558" y="589" width="260" height="58" rx="8" fill="#0A1628"/>
+  <rect x="558" y="589" width="260" height="58" rx="8" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.35)" stroke-width="1.5"/>
+  <text x="688" y="612" fill="#a78bfa" font-size="11" font-weight="600" text-anchor="middle">像素坐标 → 地理坐标</text>
+  <text x="688" y="630" fill="#94a3b8" font-size="9" text-anchor="middle">仿射变换 · CGCS2000 (EPSG:4490)</text>
 
-  <rect x="310" y="595" width="200" height="50" rx="6" fill="#0f172a"/>
-  <rect x="310" y="595" width="200" height="50" rx="6" fill="rgba(76,29,149,0.15)" stroke="#a78bfa" stroke-width="1.5"/>
-  <text x="410" y="615" fill="#a78bfa" font-size="10" font-weight="600" text-anchor="middle">小目标过滤</text>
-  <text x="410" y="632" fill="#94a3b8" font-size="9" text-anchor="middle">面积 &lt; min_area 丢弃</text>
+  <rect x="848" y="589" width="290" height="58" rx="8" fill="#0A1628"/>
+  <rect x="848" y="589" width="290" height="58" rx="8" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.35)" stroke-width="1.5"/>
+  <text x="993" y="612" fill="#a78bfa" font-size="11" font-weight="600" text-anchor="middle">GeoJSON 序列化</text>
+  <text x="993" y="630" fill="#94a3b8" font-size="9" text-anchor="middle">FeatureCollection · EPSG:4490</text>
 
-  <rect x="560" y="595" width="200" height="50" rx="6" fill="#0f172a"/>
-  <rect x="560" y="595" width="200" height="50" rx="6" fill="rgba(76,29,149,0.15)" stroke="#a78bfa" stroke-width="1.5"/>
-  <text x="660" y="615" fill="#a78bfa" font-size="10" font-weight="600" text-anchor="middle">像素 → 地理坐标</text>
-  <text x="660" y="632" fill="#94a3b8" font-size="9" text-anchor="middle">仿射变换 · CGCS2000</text>
+  <line x1="278" y1="618" x2="308" y2="618" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#ma-violet)" opacity="0.7"/>
+  <line x1="528" y1="618" x2="558" y2="618" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#ma-violet)" opacity="0.7"/>
+  <line x1="818" y1="618" x2="848" y2="618" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#ma-violet)" opacity="0.7"/>
 
-  <rect x="810" y="595" width="200" height="50" rx="6" fill="#0f172a"/>
-  <rect x="810" y="595" width="200" height="50" rx="6" fill="rgba(76,29,149,0.15)" stroke="#a78bfa" stroke-width="1.5"/>
-  <text x="910" y="615" fill="#a78bfa" font-size="10" font-weight="600" text-anchor="middle">GeoJSON 序列化</text>
-  <text x="910" y="632" fill="#94a3b8" font-size="9" text-anchor="middle">EPSG:4490 标准化输出</text>
+  <!-- L5: Output -->
+  <rect x="40" y="692" width="1120" height="98" rx="10" fill="none" stroke="rgba(0,212,170,0.25)" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <rect x="48" y="686" width="160" height="16" rx="3" fill="#0A1628"/>
+  <text x="56" y="698" fill="#00D4AA" font-size="10" font-weight="600">OUTPUT LAYER · 输出层</text>
 
-  <!-- Internal arrow -->
-  <line x1="260" y1="620" x2="310" y2="620" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow-violet)"/>
-  <line x1="510" y1="620" x2="560" y2="620" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow-violet)"/>
-  <line x1="760" y1="620" x2="810" y2="620" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow-violet)"/>
+  <rect x="58" y="712" width="230" height="58" rx="8" fill="#0A1628"/>
+  <rect x="58" y="712" width="230" height="58" rx="8" fill="rgba(0,212,170,0.08)" stroke="rgba(0,212,170,0.4)" stroke-width="1.5"/>
+  <text x="173" y="735" fill="#00D4AA" font-size="11" font-weight="600" text-anchor="middle">GeoJSON 标注文件</text>
+  <text x="173" y="753" fill="#94a3b8" font-size="9" text-anchor="middle">CGCS2000 · FeatureCollection</text>
 
-  <!-- ====== Row 5: 输出层 ====== -->
-  <rect x="40" y="690" width="1120" height="100" rx="8" fill="none" stroke="#22d3ee" stroke-width="1" stroke-dasharray="6,3" opacity="0.5"/>
-  <text x="52" y="708" fill="#22d3ee" font-size="9" font-weight="600">OUTPUT LAYER · 输出层</text>
+  <rect x="318" y="712" width="230" height="58" rx="8" fill="#0A1628"/>
+  <rect x="318" y="712" width="230" height="58" rx="8" fill="rgba(0,212,170,0.08)" stroke="rgba(0,212,170,0.4)" stroke-width="1.5"/>
+  <text x="433" y="735" fill="#00D4AA" font-size="11" font-weight="600" text-anchor="middle">标注后预览影像</text>
+  <text x="433" y="753" fill="#94a3b8" font-size="9" text-anchor="middle">检测框 + ID 叠印 · JPEG/PNG</text>
 
-  <rect x="60" y="720" width="220" height="50" rx="6" fill="#0f172a"/>
-  <rect x="60" y="720" width="220" height="50" rx="6" fill="rgba(8,51,68,0.3)" stroke="#22d3ee" stroke-width="1.5"/>
-  <text x="170" y="740" fill="#22d3ee" font-size="10" font-weight="600" text-anchor="middle">GeoJSON 标注文件</text>
-  <text x="170" y="757" fill="#94a3b8" font-size="9" text-anchor="middle">CGCS2000 · FeatureCollection</text>
+  <rect x="578" y="712" width="230" height="58" rx="8" fill="#0A1628"/>
+  <rect x="578" y="712" width="230" height="58" rx="8" fill="rgba(0,212,170,0.08)" stroke="rgba(0,212,170,0.4)" stroke-width="1.5"/>
+  <text x="693" y="735" fill="#00D4AA" font-size="11" font-weight="600" text-anchor="middle">数据看板</text>
+  <text x="693" y="753" fill="#94a3b8" font-size="9" text-anchor="middle">检测统计图表 · 热力图</text>
 
-  <rect x="330" y="720" width="220" height="50" rx="6" fill="#0f172a"/>
-  <rect x="330" y="720" width="220" height="50" rx="6" fill="rgba(8,51,68,0.3)" stroke="#22d3ee" stroke-width="1.5"/>
-  <text x="440" y="740" fill="#22d3ee" font-size="10" font-weight="600" text-anchor="middle">标注后预览图</text>
-  <text x="440" y="757" fill="#94a3b8" font-size="9" text-anchor="middle">框 + ID 叠印 · JPEG/PNG</text>
+  <rect x="838" y="712" width="300" height="58" rx="8" fill="#0A1628"/>
+  <rect x="838" y="712" width="300" height="58" rx="8" fill="rgba(0,212,170,0.08)" stroke="rgba(0,212,170,0.4)" stroke-width="1.5"/>
+  <text x="988" y="735" fill="#00D4AA" font-size="11" font-weight="600" text-anchor="middle">QGIS / ArcGIS 直接导入</text>
+  <text x="988" y="753" fill="#94a3b8" font-size="9" text-anchor="middle">标准 GIS 工具链兼容</text>
 
-  <rect x="600" y="720" width="220" height="50" rx="6" fill="#0f172a"/>
-  <rect x="600" y="720" width="220" height="50" rx="6" fill="rgba(8,51,68,0.3)" stroke="#22d3ee" stroke-width="1.5"/>
-  <text x="710" y="740" fill="#22d3ee" font-size="10" font-weight="600" text-anchor="middle">数据看板</text>
-  <text x="710" y="757" fill="#94a3b8" font-size="9" text-anchor="middle">统计图表 · 热力图</text>
+  <line x1="993" y1="647" x2="433" y2="712" stroke="#00D4AA" stroke-width="1.5" marker-end="url(#ma-cyan)" opacity="0.6"/>
+  <line x1="993" y1="647" x2="173" y2="712" stroke="#00D4AA" stroke-width="1.5" marker-end="url(#ma-cyan)" opacity="0.6"/>
+  <line x1="993" y1="647" x2="693" y2="712" stroke="#00D4AA" stroke-width="1.5" marker-end="url(#ma-cyan)" opacity="0.6"/>
+  <line x1="993" y1="647" x2="988" y2="712" stroke="#00D4AA" stroke-width="1.5" marker-end="url(#ma-cyan)" opacity="0.6"/>
 
-  <rect x="870" y="720" width="270" height="50" rx="6" fill="#0f172a"/>
-  <rect x="870" y="720" width="270" height="50" rx="6" fill="rgba(8,51,68,0.3)" stroke="#22d3ee" stroke-width="1.5"/>
-  <text x="1005" y="740" fill="#22d3ee" font-size="10" font-weight="600" text-anchor="middle">QGIS / ArcGIS 直接导入</text>
-  <text x="1005" y="757" fill="#94a3b8" font-size="9" text-anchor="middle">标准 GIS 工具链兼容</text>
+  <!-- Electron Process Bar -->
+  <rect x="40" y="810" width="1120" height="58" rx="8" fill="#0A1628"/>
+  <rect x="40" y="810" width="1120" height="58" rx="8" fill="rgba(0,212,170,0.05)" stroke="rgba(0,212,170,0.35)" stroke-width="1.5"/>
+  <text x="600" y="834" fill="#00D4AA" font-size="11" font-weight="600" text-anchor="middle">Electron Shell · Vue 3 + Element Plus + MapLibre GL → Python 子进程 FastAPI (localhost:8765)</text>
+  <text x="600" y="854" fill="#64748b" font-size="9" text-anchor="middle">electron-builder → Setup.exe · 内置 Python Runtime + CUDA + 模型权重 (~2.5GB)</text>
 
-  <!-- Arrows post → output -->
-  <line x1="910" y1="645" x2="440" y2="720" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
-  <line x1="910" y1="645" x2="170" y2="720" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
-  <line x1="910" y1="645" x2="1005" y2="720" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
-
-  <!-- ====== Electron Shell ====== -->
-  <rect x="40" y="810" width="1120" height="50" rx="6" fill="#0f172a"/>
-  <rect x="40" y="810" width="1120" height="50" rx="6" fill="rgba(8,51,68,0.2)" stroke="#22d3ee" stroke-width="1"/>
-  <text x="600" y="830" fill="#22d3ee" font-size="11" font-weight="600" text-anchor="middle">Electron Shell · Vue 3 + Element Plus + Leaflet → localhost:8765 FastAPI (Python 子进程)</text>
-  <text x="600" y="847" fill="#64748b" font-size="9" text-anchor="middle">electron-builder 打包 → Setup.exe · 内置 Python Runtime + 模型权重</text>
-
-  <!-- ====== Legend ====== -->
-  <rect x="920" y="90" width="240" height="16" rx="3" fill="none"/>
+  <!-- Legend -->
+  <g transform="translate(36, 888)">
+    <rect x="0" y="0" width="12" height="12" rx="3" fill="rgba(240,192,64,0.2)" stroke="#F0C040" stroke-width="1"/>
+    <text x="18" y="10" fill="#94a3b8" font-size="8">输入/输出</text>
+    <rect x="90" y="0" width="12" height="12" rx="3" fill="rgba(255,107,53,0.2)" stroke="#FF6B35" stroke-width="1"/>
+    <text x="108" y="10" fill="#94a3b8" font-size="8">预处理</text>
+    <rect x="175" y="0" width="12" height="12" rx="3" fill="rgba(52,211,153,0.2)" stroke="#34d399" stroke-width="1"/>
+    <text x="193" y="10" fill="#94a3b8" font-size="8">GPU 推理</text>
+    <rect x="275" y="0" width="12" height="12" rx="3" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="1"/>
+    <text x="293" y="10" fill="#94a3b8" font-size="8">后处理</text>
+    <rect x="370" y="0" width="12" height="12" rx="3" fill="rgba(0,212,170,0.2)" stroke="#00D4AA" stroke-width="1"/>
+    <text x="388" y="10" fill="#94a3b8" font-size="8">桌面壳</text>
+    <text x="480" y="10" fill="#64748b" font-size="8">全部坐标系统一使用 CGCS2000 (EPSG:4490)</text>
+  </g>
 </svg>

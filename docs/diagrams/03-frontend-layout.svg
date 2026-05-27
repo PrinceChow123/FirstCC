@@ -26,7 +26,7 @@
     text { font-family: 'JetBrains Mono', 'Noto Sans SC', 'PingFang SC', sans-serif; }
   </style>
 
-  <rect width="1200" height="900" fill="#0f172a"/>
+  <rect width="1200" height="900" fill="#0A1628"/>
   <rect width="1200" height="900" fill="url(#grid)"/>
 
   <!-- Title bar -->
@@ -79,18 +79,18 @@
   <!-- Detection box 1 - high confidence -->
   <rect x="200" y="280" width="85" height="50" rx="2" fill="rgba(0,212,170,0.1)" stroke="#00D4AA" stroke-width="2" filter="url(#glow-cyan)"/>
   <rect x="200" y="280" width="65" height="18" rx="2" fill="#00D4AA"/>
-  <text x="232" y="293" fill="#0f172a" font-size="8" font-weight="700" text-anchor="middle">GC-001 0.92</text>
+  <text x="232" y="293" fill="#0A1628" font-size="8" font-weight="700" text-anchor="middle">GC-001 0.92</text>
   <line x1="242" y1="305" x2="242" y2="280" stroke="#00D4AA" stroke-width="0.5"/>
 
   <!-- Detection box 2 - medium confidence -->
   <rect x="500" y="350" width="65" height="40" rx="2" fill="rgba(240,192,64,0.1)" stroke="#F0C040" stroke-width="2"/>
   <rect x="500" y="350" width="65" height="18" rx="2" fill="#F0C040"/>
-  <text x="532" y="363" fill="#0f172a" font-size="8" font-weight="700" text-anchor="middle">GC-002 0.58</text>
+  <text x="532" y="363" fill="#0A1628" font-size="8" font-weight="700" text-anchor="middle">GC-002 0.58</text>
 
   <!-- Detection box 3 - small -->
   <rect x="420" y="440" width="40" height="28" rx="2" fill="rgba(0,212,170,0.1)" stroke="#00D4AA" stroke-width="2" filter="url(#glow-cyan)"/>
   <rect x="420" y="440" width="50" height="14" rx="2" fill="#00D4AA"/>
-  <text x="445" y="451" fill="#0f172a" font-size="7" font-weight="700" text-anchor="middle">GC-003 0.81</text>
+  <text x="445" y="451" fill="#0A1628" font-size="7" font-weight="700" text-anchor="middle">GC-003 0.81</text>
 
   <!-- Grid overlay hint -->
   <text x="690" y="540" fill="#334155" font-size="8" text-anchor="end">缩放: 75% · EPSG:4490</text>
