@@ -626,33 +626,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'End') { e.preventDefault(); navigate(total - 1); }
 });
 
-let wheelTimeout;
-document.addEventListener('wheel', e => {
-  if (e.target.closest('pre') || e.target.closest('.slide::-webkit-scrollbar')) return;
-  const el = slides[current];
-  const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 2;
-  const atTop = el.scrollTop <= 2;
-  clearTimeout(wheelTimeout);
-  wheelTimeout = setTimeout(() => {
-    if (Math.abs(e.deltaY) > 30) {
-      if (e.deltaY > 0 && atBottom) changeSlide(1);
-      else if (e.deltaY < 0 && atTop) changeSlide(-1);
-    }
-  }, 50);
-}, { passive: true });
-
-let touchStartY = 0;
-document.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; });
-document.addEventListener('touchend', e => {
-  const diff = touchStartY - e.changedTouches[0].clientY;
-  if (Math.abs(diff) > 50) {
-    const el = slides[current];
-    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 2;
-    const atTop = el.scrollTop <= 2;
-    if (diff > 0 && atBottom) changeSlide(1);
-    else if (diff < 0 && atTop) changeSlide(-1);
-  }
-});
 
 // Particle starfield
 (function(){
