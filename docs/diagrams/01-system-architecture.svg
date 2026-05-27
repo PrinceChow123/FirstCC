@@ -178,7 +178,7 @@
   <rect x="308" y="589" width="220" height="58" rx="8" fill="#0A1628"/>
   <rect x="308" y="589" width="220" height="58" rx="8" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.35)" stroke-width="1.5"/>
   <text x="418" y="612" fill="#a78bfa" font-size="11" font-weight="600" text-anchor="middle">小目标去噪</text>
-  <text x="418" y="630" fill="#94a3b8" font-size="9" text-anchor="middle">面积 < 0.01 m² → 丢弃</text>
+  <text x="418" y="630" fill="#94a3b8" font-size="9" text-anchor="middle">面积 &lt; 0.01 m² → 丢弃</text>
 
   <rect x="558" y="589" width="260" height="58" rx="8" fill="#0A1628"/>
   <rect x="558" y="589" width="260" height="58" rx="8" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.35)" stroke-width="1.5"/>

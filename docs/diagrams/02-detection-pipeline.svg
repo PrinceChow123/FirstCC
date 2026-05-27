@@ -133,7 +133,7 @@
   <line x1="510" y1="440" x2="510" y2="475" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow-violet)"/>
   <line x1="790" y1="440" x2="790" y2="475" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow-violet)"/>
 
-  <!-- Step 4d -- geolocation (merged) -->
+  <!-- Step 4d: geolocation (merged) -->
   <rect x="100" y="480" width="800" height="60" rx="6" fill="#0A1628"/>
   <rect x="100" y="480" width="800" height="60" rx="6" fill="rgba(76,29,149,0.2)" stroke="#a78bfa" stroke-width="2"/>
 
