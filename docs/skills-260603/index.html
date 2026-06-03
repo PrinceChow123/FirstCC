@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Skill 能力地图｜2026-06-03 学习复盘</title>
+  <style>
+    :root {
+      --bg: #090b12;
+      --bg-soft: #101522;
+      --panel: rgba(255, 255, 255, 0.075);
+      --panel-strong: rgba(255, 255, 255, 0.12);
+      --line: rgba(255, 255, 255, 0.16);
+      --text: #f4f7fb;
+      --muted: #aab5c8;
+      --quiet: #748199;
+      --cyan: #6ee7f9;
+      --mint: #63f2bd;
+      --gold: #f8c96b;
+      --rose: #ff7ab6;
+      --violet: #a78bfa;
+      --blue: #7db8ff;
+      --danger: #ff8b8b;
+      --radius: 8px;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+      overflow-x: hidden;
+      background:
+        linear-gradient(120deg, rgba(110, 231, 249, 0.12) 0%, transparent 24%),
+        linear-gradient(300deg, transparent 58%, rgba(255, 122, 182, 0.1) 100%),
+        linear-gradient(135deg, #090b12 0%, #121726 52%, #090b12 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.28;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: linear-gradient(to bottom, black, transparent 76%);
+      z-index: -2;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background: linear-gradient(180deg, transparent, rgba(9, 11, 18, 0.72) 68%, #090b12);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--cyan), var(--mint), var(--gold), var(--rose));
+      z-index: 20;
+      box-shadow: 0 0 26px rgba(110, 231, 249, 0.7);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 15;
+      backdrop-filter: blur(18px);
+      background: rgba(9, 11, 18, 0.72);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: max-content;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .brand-mark {
+      width: 24px;
+      height: 24px;
+      border: 1px solid rgba(255,255,255,0.28);
+      background:
+        linear-gradient(135deg, rgba(110,231,249,0.95), rgba(99,242,189,0.1)),
+        linear-gradient(45deg, transparent 45%, rgba(255,255,255,0.9) 45% 55%, transparent 55%);
+      border-radius: 6px;
+      box-shadow: 0 0 30px rgba(110,231,249,0.34);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      justify-content: flex-end;
+    }
+
+    .nav-links::-webkit-scrollbar { display: none; }
+
+    .nav-links a {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      transition: 180ms ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      border-color: var(--line);
+      background: rgba(255,255,255,0.07);
+    }
+
+    main { position: relative; }
+
+    .hero {
+      min-height: 92vh;
+      display: grid;
+      align-items: center;
+      padding: 96px 24px 56px;
+      position: relative;
+    }
+
+    .hero-inner, .section-inner {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--cyan);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 48px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      max-width: 980px;
+      font-size: clamp(54px, 8vw, 112px);
+      line-height: 0.92;
+      letter-spacing: 0;
+      font-weight: 900;
+    }
+
+    .hero-title-accent {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1.2px rgba(255,255,255,0.72);
+      text-shadow: none;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: clamp(18px, 2.2vw, 24px);
+      line-height: 1.55;
+    }
+
+    .hero-meta {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 46px;
+      max-width: 980px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.045));
+      border-radius: var(--radius);
+      padding: 18px;
+      min-height: 118px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 30px;
+      line-height: 1;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    section {
+      padding: 88px 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 48px;
+      align-items: end;
+      margin-bottom: 36px;
+    }
+
+    .section-kicker {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: 0;
+      font-weight: 900;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 620px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.045));
+      border-radius: var(--radius);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.22);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+      opacity: 0.76;
+    }
+
+    .card h3 {
+      font-size: 21px;
+      line-height: 1.22;
+      margin-bottom: 12px;
+    }
+
+    .card p, .card li {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .card ul {
+      margin: 14px 0 0;
+      padding-left: 18px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      background: rgba(255,255,255,0.045);
+    }
+
+    .tag.good { color: var(--mint); border-color: rgba(99,242,189,0.32); }
+    .tag.warn { color: var(--gold); border-color: rgba(248,201,107,0.36); }
+    .tag.skip { color: var(--danger); border-color: rgba(255,139,139,0.34); }
+    .tag.info { color: var(--cyan); border-color: rgba(110,231,249,0.32); }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr 1fr 1fr;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: rgba(255,255,255,0.045);
+    }
+
+    .matrix > div {
+      padding: 18px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      min-height: 86px;
+    }
+
+    .matrix > div:nth-child(4n) { border-right: 0; }
+    .matrix > div:nth-last-child(-n+4) { border-bottom: 0; }
+
+    .matrix .head {
+      background: rgba(255,255,255,0.095);
+      color: var(--text);
+      font-weight: 850;
+      min-height: auto;
+    }
+
+    .matrix .label {
+      color: var(--cyan);
+      font-weight: 850;
+    }
+
+    .matrix p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .feature-band {
+      margin-top: 30px;
+      padding: 28px;
+      border: 1px solid rgba(110,231,249,0.28);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(110,231,249,0.14), transparent 38%),
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.035));
+      box-shadow: var(--shadow);
+    }
+
+    .feature-band h3 {
+      font-size: clamp(26px, 3.2vw, 40px);
+      line-height: 1.08;
+      margin-bottom: 14px;
+    }
+
+    .feature-band p { color: var(--muted); max-width: 860px; }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 18px;
+      align-items: start;
+      padding: 18px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .step:first-child { border-top: 0; }
+
+    .step-num {
+      color: var(--gold);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    .step h3 { font-size: 20px; margin-bottom: 4px; }
+    .step p { color: var(--muted); font-size: 15px; }
+
+    .compare {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.055);
+    }
+
+    .compare th, .compare td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    .compare th {
+      color: var(--text);
+      background: rgba(255,255,255,0.1);
+      font-weight: 850;
+    }
+
+    .compare td {
+      color: var(--muted);
+    }
+
+    .compare tr:last-child td { border-bottom: 0; }
+    .compare th:last-child, .compare td:last-child { border-right: 0; }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .pipe {
+      min-height: 120px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.055);
+      position: relative;
+    }
+
+    .pipe::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      width: 10px;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .pipe:last-child::after { display: none; }
+
+    .pipe strong {
+      display: block;
+      color: var(--text);
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .pipe span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .decision {
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: 16px;
+    }
+
+    .install-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .install-list li {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 14px;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .install-list li:first-child { border-top: 0; }
+
+    .install-list strong { color: var(--text); }
+
+    .quote {
+      font-size: clamp(28px, 4vw, 54px);
+      line-height: 1.14;
+      font-weight: 900;
+      color: var(--text);
+      max-width: 1020px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .quote span {
+      color: var(--cyan);
+    }
+
+    .foot {
+      padding: 58px 24px 84px;
+      color: var(--quiet);
+      text-align: center;
+      border-top: 1px solid var(--line);
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: 700ms ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .section-head,
+      .decision {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-meta,
+      .grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-3,
+      .grid-2,
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      .pipe::after { display: none; }
+      .matrix { grid-template-columns: 1fr; }
+      .matrix > div { border-right: 0; }
+      .matrix > div:nth-last-child(-n+4) { border-bottom: 1px solid var(--line); }
+      .matrix > div:last-child { border-bottom: 0; }
+    }
+
+    @media (max-width: 640px) {
+      .hero { padding-top: 72px; }
+      h1 { font-size: 48px; }
+      .hero-meta { grid-template-columns: 1fr; }
+      .nav { align-items: flex-start; flex-direction: column; }
+      section { padding: 64px 18px; }
+      .card, .feature-band { padding: 20px; }
+      .step { grid-template-columns: 1fr; gap: 8px; }
+      .install-list li { grid-template-columns: 1fr; gap: 4px; }
+      .compare { display: block; overflow-x: auto; white-space: nowrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header class="topbar">
+    <nav class="nav" aria-label="页面导航">
+      <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>Skill Atlas</a>
+      <div class="nav-links">
+        <a href="#framework">框架</a>
+        <a href="#foundation">基础维护</a>
+        <a href="#media">自媒体</a>
+        <a href="#htmlppt">Html-ppt</a>
+        <a href="#creator">创作工作台</a>
+        <a href="#dev">开发</a>
+        <a href="#install">安装建议</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="eyebrow fade-in">2026.06.03 Learning Review</div>
+        <h1 class="fade-in">Skills 能力地图 <span class="hero-title-accent">从插件清单到 Agent 操作系统</span></h1>
+        <p class="lead fade-in">基于《260603_cc的skill.pdf》整理：把今天学习的 skill 认知升级成一套可执行的选择框架，区分全局能力、项目能力、重叠能力和暂缓能力。</p>
+        <div class="hero-meta">
+          <div class="metric fade-in"><strong>4</strong><span>大类能力：基础维护、自媒体、创作工作台、开发生态</span></div>
+          <div class="metric fade-in"><strong>18+</strong><span>个重点 skill / plugin 被纳入评估</span></div>
+          <div class="metric fade-in"><strong>5</strong><span>个适合优先全局安装的核心能力</span></div>
+          <div class="metric fade-in"><strong>1</strong><span>个核心方法：按场景、频率、重叠度做取舍</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="framework">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Decision Framework</div>
+            <h2>Skill 不是越多越好，而是让 Agent 长出“刚好需要”的能力。</h2>
+          </div>
+          <p class="section-copy">今天笔记里最有价值的部分，不是记住每个插件叫什么，而是形成了一个判断模型：哪些能力应该常驻，哪些能力只服务某类项目，哪些因为功能重叠或价值不明显可以暂缓。</p>
+        </div>
+
+        <div class="matrix fade-in">
+          <div class="head">判断维度</div>
+          <div class="head">全局安装</div>
+          <div class="head">项目安装</div>
+          <div class="head">暂缓 / 不装</div>
+
+          <div class="label">使用频率</div>
+          <div>搜索、PPT、开发流程、模型生态这类高频基础设施。</div>
+          <div>视频生成、文案润色、内容发布等场景型任务。</div>
+          <div>低频且没有明确使用场景的“增强类”能力。</div>
+
+          <div class="label">复用程度</div>
+          <div>跨项目都能复用，换任务也有价值。</div>
+          <div>在某类项目里很强，但离开该项目就闲置。</div>
+          <div>能力看起来宽泛，但实际收益不稳定。</div>
+
+          <div class="label">能力重叠</div>
+          <div>作为主力工具，承担唯一或核心入口。</div>
+          <div>在主工具不覆盖的细分场景里补位。</div>
+          <div>与已有主力工具高度重复，比如多套 HTML slides 工具同时安装。</div>
+
+          <div class="label">维护成本</div>
+          <div>值得长期维护，配置一次长期受益。</div>
+          <div>跟随项目生命周期维护。</div>
+          <div>会增加上下文噪音和选择成本。</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="foundation">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Foundation</div>
+            <h2>基础维护类：先分清“让 AI 更聪明”和“让 AI 更能干”。</h2>
+          </div>
+          <p class="section-copy">笔记中对基础维护类的判断很清晰：Claude Code 本身已经足够聪明，泛泛的自我改进类 skill 价值有限；真正值得全局化的是搜索这种外部信息能力。</p>
+        </div>
+
+        <div class="grid grid-4">
+          <article class="card fade-in">
+            <h3>Self-improving-agent</h3>
+            <p>定位是让 Agent 自我改进，但你的判断是：对 Claude Code 这类强编码 Agent 来说，收益不明显。</p>
+            <div class="tag-row"><span class="tag skip">暂缓</span><span class="tag">价值不确定</span></div>
+          </article>
+
+          <article class="card fade-in">
+            <h3>Proactive-agent</h3>
+            <p>偏主动代理能力。笔记里认为实用性不强，至少不适合作为全局基础能力优先安装。</p>
+            <div class="tag-row"><span class="tag skip">暂缓</span><span class="tag">低优先级</span></div>
+          </article>
+
+          <article class="card fade-in">
+            <h3>Mem9</h3>
+            <p>给智能体增强记忆。Claude Code 不一定需要，但 OpenClaw 这类私人助理型 Agent 非常适合。</p>
+            <div class="tag-row"><span class="tag warn">按 Agent 安装</span><span class="tag">记忆增强</span></div>
+          </article>
+
+          <article class="card fade-in">
+            <h3>Tavily-search</h3>
+            <p>AI 搜索器，特点是搜索噪音更低。它扩展的是外部信息获取能力，适合作为全局工具。</p>
+            <div class="tag-row"><span class="tag good">全局安装</span><span class="tag info">搜索基础设施</span></div>
+          </article>
+        </div>
+
+        <div class="feature-band fade-in">
+          <h3>延展理解：聪明不是瓶颈，信息入口和任务边界才是瓶颈。</h3>
+          <p>当基础模型已经足够强时，继续堆“让 AI 更聪明”的 skill 边际收益会下降；更应该优先补足搜索、记忆、执行环境、结构化输出这些明确能力。也就是说，skill 的价值不是替代模型能力，而是给模型接上工具、流程和长期上下文。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="media">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Media Stack</div>
+            <h2>自媒体类：内容生产不是一个 skill，而是一条流水线。</h2>
+          </div>
+          <p class="section-copy">视频、文案、PPT、图文卡片、公众号发布，各自对应不同的生产环节。选择时要看你是不是正在做内容项目，而不是把所有创作插件都全局装上。</p>
+        </div>
+
+        <div class="grid grid-3">
+          <article class="card fade-in">
+            <h3>Hyperframes</h3>
+            <p>适合做 HTML 转动画视频，动效表现力强。你的判断是可以安装，但更适合用于专门的智能体或特定视频项目。</p>
+            <ul>
+              <li>适合网页转视频、动态视觉展示</li>
+              <li>适合产品动效和内容视觉包装</li>
+              <li>不建议作为默认全局能力</li>
+            </ul>
+            <div class="tag-row"><span class="tag warn">项目安装</span><span class="tag">HTML to Video</span></div>
+          </article>
+
+          <article class="card fade-in">
+            <h3>Remotion</h3>
+            <p>核心思路是用 React 写视频画面、动画、字幕、转场、音频，然后渲染成 MP4、GIF 或静帧。</p>
+            <ul>
+              <li>产品介绍、发布视频、教程视频</li>
+              <li>网页、数据、图表动态视频</li>
+              <li>字幕、标题卡、片头片尾、旁白和背景音乐</li>
+              <li>波形、频谱条、节奏动画等音频可视化</li>
+              <li>React / Three.js 2D 或 3D 动画</li>
+              <li>批量生成参数化视频，处理素材时长和尺寸</li>
+            </ul>
+            <div class="tag-row"><span class="tag warn">项目安装</span><span class="tag">代码生成视频</span></div>
+          </article>
+
+          <article class="card fade-in">
+            <h3>Humanize</h3>
+            <p>目标是去除 AI 味道。它适合文案密集的项目，也适合某些专门处理内容润色的智能体。</p>
+            <ul>
+              <li>文章、社媒、公众号文案润色</li>
+              <li>降低模板感和机器腔</li>
+              <li>不需要进入所有编码型 Agent</li>
+            </ul>
+            <div class="tag-row"><span class="tag warn">项目安装</span><span class="tag">文案润色</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="htmlppt">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Presentation Engine</div>
+            <h2>Html-ppt 是今天笔记里的主力工具：它把 PPT 变成可编程的网页表达。</h2>
+          </div>
+          <p class="section-copy">你把 Html-ppt 评价为“太重要了，适合全局安装”。它不只是生成幻灯片，而是提供主题、布局、动画、键盘运行时和演讲者模式的一整套展示系统。</p>
+        </div>
+
+        <div class="grid grid-4">
+          <article class="card fade-in">
+            <h3>36 套主题</h3>
+            <p>纯 CSS 变量驱动，按 T 键实时切换。覆盖商务路演、技术分享、小红书图文、学术报告、赛博炫酷等场景。</p>
+            <div class="tag-row"><span class="tag info">pitch-deck-vc</span><span class="tag info">tokyo-night</span><span class="tag info">xiaohongshu-white</span></div>
+          </article>
+
+          <article class="card fade-in">
+            <h3>31 种布局模板</h3>
+            <p>不用从零设计，可直接复制封面、目录、图文混排、数据图表、对比、时间线、团队成员等布局块。</p>
+            <div class="tag-row"><span class="tag info">cover</span><span class="tag info">timeline</span><span class="tag info">comparison</span></div>
+          </article>
+
+          <article class="card fade-in">
+            <h3>47 种动画能力</h3>
+            <p>包含 27 种 CSS 入场动画和 20 种 Canvas 特效，比如淡入、滑入、粒子、烟花、矩阵雨、知识图谱、星空和磁力场。</p>
+            <div class="tag-row"><span class="tag info">CSS</span><span class="tag info">Canvas FX</span></div>
+          </article>
+
+          <article class="card fade-in">
+            <h3>键盘运行时</h3>
+            <p>左右翻页、T 切主题、F 全屏、O 缩略图概览、S 演讲者模式、N 笔记抽屉，适合真实演示。</p>
+            <div class="tag-row"><span class="tag good">全局安装</span><span class="tag">演示系统</span></div>
+          </article>
+        </div>
+
+        <div class="feature-band fade-in">
+          <h3>演讲者模式是 Html-ppt 的杀手级能力。</h3>
+          <p>按 S 键弹出独立窗口，包含当前页预览、下一页预览、逐字稿和计时器四个磁力卡片。每张卡片可以拖拽和调整大小，布局保存到 localStorage，翻页时预览 iframe 无刷新、无闪烁。这让 HTML 演示真正接近专业演讲控制台。</p>
+        </div>
+
+        <div style="margin-top: 28px" class="fade-in">
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>维度</th>
+                <th>传统 pptx</th>
+                <th>html-ppt</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>输出</td><td>.pptx 二进制文件</td><td>HTML + CSS + JS，可部署为链接</td></tr>
+              <tr><td>打开方式</td><td>需要 Office 或兼容软件</td><td>浏览器直接打开</td></tr>
+              <tr><td>主题</td><td>手动设计为主</td><td>36 套主题一键切换</td></tr>
+              <tr><td>布局</td><td>手动排版成本高</td><td>31 种模板直接复用</td></tr>
+              <tr><td>动画</td><td>PPT 内置动画</td><td>CSS + Canvas 特效，更适合网页表达</td></tr>
+              <tr><td>代码高亮</td><td>弱，需要额外处理</td><td>内置支持，更适合技术分享</td></tr>
+              <tr><td>打印交付</td><td>更适合正式交付和纸质材料</td><td>不太适合打印和企业 OA 提交</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid grid-3" style="margin-top: 16px">
+          <article class="card fade-in">
+            <h3>最佳场景</h3>
+            <p>技术分享、Meetup 演讲、产品发布 Demo、小红书图文、在线作品集、课程课件、投资人 Pitch Deck。</p>
+          </article>
+          <article class="card fade-in">
+            <h3>不适合场景</h3>
+            <p>打印成纸质材料、企业 OA 系统提交、对传统 PPT 文件格式有强约束的正式交付。</p>
+          </article>
+          <article class="card fade-in">
+            <h3>相关工具取舍</h3>
+            <p>Ppt-master 适合全局安装；guizang-ppt-skill 和 fronted-slides 与 Html-ppt 功能重叠，更适合特定项目。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="creator">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Creator Workbench</div>
+            <h2>Baoyu-skill 是内容创作者的工作台，而不是单点工具。</h2>
+          </div>
+          <p class="section-copy">它的核心不是写代码，而是把 Agent 变成一个能采集资料、处理文章、生成视觉素材、制作幻灯片并发布到社媒或公众号的内容生产助手。</p>
+        </div>
+
+        <div class="pipeline fade-in">
+          <div class="pipe"><strong>资料抓取</strong><span>网页、YouTube、X/Twitter、微信群聊等输入源</span></div>
+          <div class="pipe"><strong>Markdown 化</strong><span>清洗、整理、frontmatter、摘要、slug、中文排版</span></div>
+          <div class="pipe"><strong>翻译整理</strong><span>quick / normal / refined 多模式翻译和审校润色</span></div>
+          <div class="pipe"><strong>视觉生成</strong><span>封面、插图、图表、漫画、信息图、小红书卡片</span></div>
+          <div class="pipe"><strong>HTML / PPT</strong><span>转换成公众号 HTML、幻灯片图片、PPTX 和 PDF</span></div>
+          <div class="pipe"><strong>发布</strong><span>X、微信公众号、微博，用户最终确认发布</span></div>
+        </div>
+
+        <div class="grid grid-3" style="margin-top: 28px">
+          <article class="card fade-in">
+            <h3>内容类 skills</h3>
+            <ul>
+              <li>baoyu-xhs-images：1-10 张小红书风格图片卡片</li>
+              <li>baoyu-infographic：时间线、金字塔、漏斗、思维导图、鱼骨图等信息图</li>
+              <li>baoyu-diagram：让 Agent 写 SVG 图示，包括流程图、时序图、架构图、类图</li>
+              <li>baoyu-cover-image：用 Type、Palette、Rendering、Text、Mood 控制封面</li>
+              <li>baoyu-slide-deck：生成幻灯片图片，并合并为 PPTX 和 PDF</li>
+              <li>baoyu-comic：把知识做成教育漫画</li>
+              <li>baoyu-article-illustrator：分析文章结构并补充插图和图解</li>
+            </ul>
+          </article>
+
+          <article class="card fade-in">
+            <h3>发布类 skills</h3>
+            <ul>
+              <li>baoyu-post-to-x：发布 X/Twitter 帖子或长文 Article，支持图片</li>
+              <li>baoyu-post-to-wechat：发布到微信公众号，支持贴图和文章模式</li>
+              <li>baoyu-post-to-weibo：发布微博文本、图片、视频或头条文章</li>
+            </ul>
+            <p style="margin-top: 14px">这说明 Baoyu 不是只做素材，而是在尝试打通从内容到发布的完整链路。</p>
+          </article>
+
+          <article class="card fade-in">
+            <h3>生成后端与工具</h3>
+            <ul>
+              <li>baoyu-image-gen：支持 OpenAI、Azure OpenAI、Google、OpenRouter、DashScope、MiniMax、即梦、豆包 Seedream、Replicate 等</li>
+              <li>baoyu-youtube-transcript：下载字幕、封面、翻译、章节、说话人识别</li>
+              <li>baoyu-url-to-markdown：用 Chrome CDP 抓取动态网页并转 Markdown</li>
+              <li>baoyu-format-markdown / markdown-to-html / translate / wechat-summary</li>
+              <li>baoyu-electron-extract：提取 Electron App 资源，偏分析工具</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="feature-band fade-in">
+          <h3>安装判断：它很强，但不该默认进入所有 Agent。</h3>
+          <p>Baoyu-skill 覆盖面很广，适合自媒体、内容工作台、公众号生产、社媒运营、知识型 IP 等项目。对于纯编码或研究型 Agent，它会显得过重；因此更适合特定项目及特定智能体安装，不建议作为所有环境的全局默认。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="dev">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Developer Stack</div>
+            <h2>开发类 skill 的价值，在于把 Agent 接入真实生态。</h2>
+          </div>
+          <p class="section-copy">Hugging Face 和 Superpowers 是偏基础设施的开发能力：一个连接模型与数据生态，一个增强工程流程和协作方法。</p>
+        </div>
+
+        <div class="grid grid-2">
+          <article class="card fade-in">
+            <h3>HuggingFace</h3>
+            <p>官方插件，适合机器学习相关工作。你的判断是适合全局安装，因为它连接的是模型、数据集、Spaces、论文、训练和评测等核心生态。</p>
+            <ul>
+              <li>查找和比较 Hugging Face 上的模型、数据集、Spaces、论文</li>
+              <li>阅读模型卡、数据集说明和论文页面并总结重点</li>
+              <li>下载或上传模型、数据集、文件到 Hub</li>
+              <li>用 Hugging Face CLI 管理仓库和资源</li>
+              <li>搭建 Gradio demo 或 Hugging Face Space</li>
+              <li>运行社区 evals，微调或训练 LLM、视觉模型</li>
+              <li>使用 Transformers.js 在前端或 Node 环境跑模型</li>
+              <li>管理训练任务和实验追踪</li>
+            </ul>
+            <div class="tag-row"><span class="tag good">全局安装</span><span class="tag info">官方插件</span><span class="tag">ML 生态</span></div>
+          </article>
+
+          <article class="card fade-in">
+            <h3>Superpowers</h3>
+            <p>开发技能包，适合全局安装。它的意义不是某个单点能力，而是让 Agent 在计划、测试、调试、验证、代码审查等流程中更有章法。</p>
+            <ul>
+              <li>适合工程任务中的系统化规划与执行</li>
+              <li>适合测试驱动、调试、验证和交付前检查</li>
+              <li>适合长期作为开发 Agent 的工作方法底座</li>
+            </ul>
+            <div class="tag-row"><span class="tag good">全局安装</span><span class="tag">开发流程</span><span class="tag">工程方法</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Installation Blueprint</div>
+            <h2>最终安装策略：先建主干，再按项目挂载专业能力。</h2>
+          </div>
+          <p class="section-copy">把所有 skill 分成三层：全局主干、项目插件、暂缓观察。这样既能保持 Agent 能力强，又不会把环境变成一团功能重叠的工具箱。</p>
+        </div>
+
+        <div class="decision">
+          <article class="card fade-in">
+            <h3>推荐全局安装</h3>
+            <ul class="install-list">
+              <li><strong>Tavily-search</strong><span>高质量搜索入口，几乎所有研究和开发任务都会用到。</span></li>
+              <li><strong>Html-ppt</strong><span>演示、汇报、课程、图文表达的通用生产力工具。</span></li>
+              <li><strong>Ppt-master</strong><span>传统 PPT 生成主力，和 Html-ppt 形成格式互补。</span></li>
+              <li><strong>HuggingFace</strong><span>连接模型、数据、论文、训练、评测和 Spaces 的官方生态入口。</span></li>
+              <li><strong>Superpowers</strong><span>开发流程和工程方法底座，适合作为编码 Agent 常驻能力。</span></li>
+            </ul>
+          </article>
+
+          <article class="card fade-in">
+            <h3>推荐按项目安装</h3>
+            <ul class="install-list">
+              <li><strong>内容项目</strong><span>Baoyu-skill、Humanize、Html-ppt、Ppt-master。</span></li>
+              <li><strong>视频项目</strong><span>Hyperframes、Remotion，根据 HTML 动效或 React 视频生成路线选择。</span></li>
+              <li><strong>私人助理</strong><span>Mem9 这类记忆增强能力，适合 OpenClaw 等长期陪伴型 Agent。</span></li>
+              <li><strong>社媒发布</strong><span>Baoyu 的 X、微信公众号、微博发布类 skills。</span></li>
+              <li><strong>暂缓观察</strong><span>Self-improving-agent、Proactive-agent，以及与 Html-ppt 高度重叠的 guizang-ppt-skill、fronted-slides。</span></li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="feature-band fade-in">
+          <h3>一条可复用原则</h3>
+          <p>如果一个 skill 提供的是“长期高频入口”，就全局安装；如果它提供的是“项目生产线”，就项目安装；如果它只是“听起来很强”，但和已有工具重叠或收益不清晰，就先不装。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-inner">
+        <p class="quote fade-in">今天的真正收获不是插件清单，而是建立了 <span>Agent 能力采购标准</span>。</p>
+        <div class="grid grid-3" style="margin-top: 42px">
+          <article class="card fade-in">
+            <h3>下一步 1：建立全局基座</h3>
+            <p>优先安装 Tavily-search、Html-ppt、Ppt-master、HuggingFace、Superpowers，形成搜索、展示、开发和模型生态的基础能力。</p>
+          </article>
+          <article class="card fade-in">
+            <h3>下一步 2：按项目建画像</h3>
+            <p>为内容生产、视频生成、私人助理、机器学习等不同 Agent 建立不同 skill profile，避免一套环境包打天下。</p>
+          </article>
+          <article class="card fade-in">
+            <h3>下一步 3：记录真实使用率</h3>
+            <p>每个 skill 安装后记录一次实际任务效果。一个月后按使用频率和不可替代性复盘，淘汰低价值或重叠能力。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>基于 /InputFiles/260603_cc的skill.pdf 整理生成。长卷式 HTML-PPT，适合上下滑动阅读和分享。</p>
+  </footer>
+
+  <script>
+    const progress = document.getElementById("progress");
+    const updateProgress = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = height > 0 ? (scrollTop / height) * 100 : 0;
+      progress.style.width = `${pct}%`;
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".fade-in").forEach((el) => observer.observe(el));
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    updateProgress();
+  </script>
+</body>
+</html>
