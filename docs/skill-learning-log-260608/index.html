@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Skills 学习日志 | 2026.06.08</title>
+<link rel="stylesheet" id="theme-link" href="../.claude/skills/html-ppt/assets/themes/tokyo-night.css">
+<link rel="stylesheet" href="../.claude/skills/html-ppt/assets/animations/animations.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #1a1b26;
+    --bg-soft: #24283b;
+    --surface: #1f2335;
+    --surface-2: #292e42;
+    --border: rgba(255,255,255,.08);
+    --border-strong: rgba(255,255,255,.16);
+    --text-1: #c0caf5;
+    --text-2: #565f89;
+    --text-3: #3b4261;
+    --accent: #7aa2f7;
+    --accent-2: #bb9af7;
+    --accent-3: #ff9e64;
+    --good: #9ece6a;
+    --warn: #e0af68;
+    --bad: #f7768e;
+    --grad: linear-gradient(135deg,#7aa2f7,#bb9af7 55%,#ff9e64);
+    --grad-soft: linear-gradient(135deg,#1f2335,#292e42 55%,#24283b);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-lg: 24px;
+    --shadow: 0 8px 32px rgba(0,0,0,.3);
+    --shadow-lg: 0 16px 48px rgba(0,0,0,.4);
+    --font-sans: 'Inter','Noto Serif SC',-apple-system,BlinkMacSystemFont,sans-serif;
+    --font-serif: 'Noto Serif SC',Georgia,serif;
+    --font-mono: 'JetBrains Mono',monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    scroll-behavior: smooth;
+    background: var(--bg);
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    line-height: 1.7;
+  }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    overflow-x: hidden;
+  }
+
+  /* Scroll container */
+  .scroll-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Hero Section */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at30% 20%, rgba(122,162,247,.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(187,154,247,.1) 0%, transparent 50%);
+    animation: heroFloat 20s ease-in-out infinite;
+  }
+
+  @keyframes heroFloat {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(-2%, 2%) rotate(1deg); }
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -.03em;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-subtitle {
+    font-size: 20px;
+    color: var(--text-2);
+    max-width: 600px;
+    margin-bottom: 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-3);
+    font-size: 14px;
+  }
+
+  .hero-meta-item svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-3);
+    font-size: 12px;
+    animation: bounce2s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+
+  /* Sections */
+  .section {
+    padding: 120px 0;
+    position: relative;
+  }
+
+  .section-header {
+    margin-bottom: 64px;
+    text-align: center;
+  }
+
+  .section-eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -.02em;
+    margin-bottom: 16px;
+  }
+
+  .section-desc {
+    font-size: 18px;
+    color: var(--text-2);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .3s ease, box-shadow .3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--grad);
+    opacity: .5;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+  }
+
+  /* Skill Card */
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: all .4s cubic-bezier(.4,0,.2,1);
+  }
+
+  .skill-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 40px rgba(122,162,247,.1);
+  }
+
+  .skill-card.new::after {
+    content: 'NEW';
+    position: absolute;
+    top: 20px;
+    right: -32px;
+    background: var(--accent-3);
+    color: var(--bg);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    padding: 4px 40px;
+    transform: rotate(45deg);
+  }
+
+  .skill-card.updated::after {
+    content: 'UPDATED';
+    position: absolute;
+    top: 20px;
+    right: -36px;
+    background: var(--good);
+    color: var(--bg);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    padding: 4px 40px;
+    transform: rotate(45deg);
+  }
+
+  .skill-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-sm);
+    background: var(--grad-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+
+  .skill-name {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-1);
+  }
+
+  .skill-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .tag-global { background: rgba(158,206,106,.2); color: var(--good); }
+  .tag-project { background: rgba(224,175,104,.2); color: var(--warn); }
+  .tag-reference { background: rgba(122,162,247,.2); color: var(--accent); }
+
+  .skill-desc {
+    font-size: 15px;
+    color: var(--text-2);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .skill-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .skill-features li {
+    padding: 8px 0;
+    padding-left: 24px;
+    position: relative;
+    font-size: 14px;
+    color: var(--text-2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skill-features li:last-child {
+    border-bottom: none;
+  }
+
+  .skill-features li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Update Section */
+  .update-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 48px;
+    margin: 24px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .update-section.highlight {
+    border-color: var(--accent-2);
+    box-shadow: 0 0 60px rgba(187,154,247,.15);
+  }
+
+  .update-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .update-badge {
+    flex-shrink: 0;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .badge-add { background: rgba(158,206,106,.2); color: var(--good); }
+  .badge-update { background: rgba(224,175,104,.2); color: var(--warn); }
+  .badge-delete { background: rgba(247,118,142,.2); color: var(--bad); }
+
+  .update-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .update-subtitle {
+    font-size: 14px;
+    color: var(--text-3);
+  }
+
+  /* Comparison Table */
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: 16px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comparison-table th {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    background: var(--surface-2);
+  }
+
+  .comparison-table td {
+    font-size: 14px;
+    color: var(--text-2);
+  }
+
+  .comparison-table tr:hover td {
+    background: var(--surface-2);
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .status-global { background: rgba(158,206,106,.15); color: var(--good); }
+  .status-project { background: rgba(224,175,104,.15); color: var(--warn); }
+
+  /* Summary Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    margin: 48px 0;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    text-align: center;
+    transition: all .3s ease;
+  }
+
+  .stat-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .stat-number {
+    font-size: 48px;
+    font-weight: 800;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  /* Animations */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .stagger-1 { transition-delay: .1s; }
+  .stagger-2 { transition-delay: .2s; }
+  .stagger-3 { transition-delay: .3s; }
+  .stagger-4 { transition-delay: .4s; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--text-3);
+    font-size: 14px;
+  }
+
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0 auto;
+    max-width: 600px;
+  }
+
+  /* Quote */
+  .quote {
+    padding: 40px;
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin: 24px 0;
+    font-family: var(--font-serif);
+    font-size: 18px;
+    color: var(--text-2);
+    font-style: italic;
+  }
+
+  /* Image placeholder */
+  .image-section {
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(135deg, var(--surface-2), var(--surface));
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 32px 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .image-section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .image-placeholder {
+    text-align: center;
+    color: var(--text-3);
+  }
+
+  .image-placeholder svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+    opacity: .5;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .section { padding: 80px 0; }
+    .card { padding: 24px; }
+    .update-section { padding: 24px; }
+    .hero h1 { font-size: 40px; }
+    .card-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="scroll-container">
+    <div class="hero-badge">
+      <svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      Learning Log
+    </div>
+    <h1>Claude Code Skills<br>学习日志</h1>
+    <p class="hero-subtitle">基于2026年6月3日 版本对比6月8日 版本，记录本次学习新增与更新的核心技能</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        2026年6月8日
+      </div>
+      <div class="hero-meta-item">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        学习时长：约 2 小时
+      </div>
+      <div class="hero-meta-item">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        新增 3 个技能 · 更新 4 处
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>向下滚动</span>
+    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 5v14M19 12l-7 7-7-7" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+  </div>
+</section>
+
+<!-- Overview Section -->
+<section class="section">
+  <div class="scroll-container">
+    <div class="section-header fade-in">
+      <span class="section-eyebrow">Overview</span>
+      <h2 class="section-title">本次学习概览</h2>
+      <p class="section-desc">对比 6月3日 与 6月8日 两个版本，发现以下关键更新</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card fade-in stagger-1">
+        <div class="stat-number">3</div>
+        <div class="stat-label">新增技能</div>
+      </div>
+      <div class="stat-card fade-in stagger-2">
+        <div class="stat-number">4</div>
+        <div class="stat-label">内容更新</div>
+      </div>
+      <div class="stat-card fade-in stagger-3">
+        <div class="stat-number">1</div>
+        <div class="stat-label">分类调整</div>
+      </div>
+      <div class="stat-card fade-in stagger-4">
+        <div class="stat-number">5</div>
+        <div class="stat-label">全局安装推荐</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- New Skills Section -->
+<section class="section">
+  <div class="scroll-container">
+    <div class="section-header fade-in">
+      <span class="section-eyebrow">New Skills</span>
+      <h2 class="section-title">新增技能</h2>
+      <p class="section-desc">本次新学习并记录的三个技能</p>
+    </div>
+
+    <div class="card-grid">
+      <!-- awesome-claude-code -->
+      <div class="skill-card new fade-in">
+        <div class="skill-icon">🌟</div>
+        <h3 class="skill-name">awesome-claude-code</h3>
+        <span class="skill-tag tag-reference">参考资源</span>
+        <p class="skill-desc">Claude Code 生态的"豆瓣"——只看不装。资源索引，精选文章、skill、hook、status line、orchestrator、工具集合。</p>
+        <ul class="skill-features">
+          <li>精选资源索引库</li>
+          <li>覆盖 Skills、Hooks、Workflows、Tooling 等</li>
+          <li>不适合全局安装，适合学习 Claude Code 文件夹</li>
+          <li>提供仓库评估的 slash command</li>
+        </ul>
+        <div class="quote">
+          "这是 Claude Code 生态的豆瓣——只看不装，用于学习和维护 Claude Code 文件夹极佳"
+        </div>
+      </div>
+
+      <!-- taste-skill -->
+      <div class="skill-card new fade-in stagger-1">
+        <div class="skill-icon">🎨</div>
+        <h3 class="skill-name">taste-skill</h3>
+        <span class="skill-tag tag-project">特定项目</span>
+        <p class="skill-desc">包含多种技能的集合，核心功能是提升 AI 生成的前端界面的"品味"——让 AI 摆脱所有"AI 默认会做的事"（slop）。</p>
+        <ul class="skill-features">
+          <li>设计哲学：约束即创造</li>
+          <li>教 AI"不要做什么"而非"做什么"</li>
+          <li>可移植封装，同时适配 Cursor、Codex、Claude Code</li>
+          <li>建议在需要极强设计感的项目中尝试采用</li>
+        </ul>
+        <div class="quote">
+          "约束即创造——这是一套设计哲学的可移植封装"
+        </div>
+      </div>
+
+      <!-- SuperClaude -->
+      <div class="skill-card new fade-in stagger-2">
+        <div class="skill-icon">⚡</div>
+        <h3 class="skill-name">SuperClaude</h3>
+        <span class="skill-tag tag-project">特定项目</span>
+        <p class="skill-desc">Meta-programming configuration framework，通过"行为指令注入"和"组件编排"，把 Claude Code 从聊天工具变成结构化开发平台。</p>
+        <ul class="skill-features">
+          <li>行为指令注入系统</li>
+          <li>组件编排能力</li>
+          <li>结构化开发平台转换</li>
+          <li>专门适配 Claude Code，功能过于强大</li>
+        </ul>
+        <div class="quote">
+          "把 Claude Code 从一个聊天工具变成结构化开发平台"
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Updated Skills Section -->
+<section class="section">
+  <div class="scroll-container">
+    <div class="section-header fade-in">
+      <span class="section-eyebrow">Updated</span>
+      <h2 class="section-title">技能评价更新</h2>
+      <p class="section-desc">对已有技能的评价或分类发生变化的内容</p>
+    </div>
+
+   <div class="update-section highlight fade-in">
+      <div class="update-header">
+        <span class="update-badge badge-update">评价更新</span>
+        <div>
+          <h3 class="update-title">Html-ppt</h3>
+          <p class="update-subtitle">本次新增了个人使用评价</p>
+        </div>
+      </div>
+      <div class="card" style="background: var(--surface-2); border: none; box-shadow: none;">
+        <p class="skill-desc">主要用来生成 html-ppt 格式。本次学习新增了个人评价：</p>
+        <div class="quote" style="border-color: var(--accent); background: var(--surface);">
+          "这个技能作出的 ppt 相对来讲比较好看"
+        </div>
+        <p class="skill-desc" style="margin-top: 16px;">
+          Html-ppt 技能支持 36 套主题一键切换、31 种布局模板、双层动画系统（27 种 CSS + 20 种 Canvas 特效），
+          以及强大的演讲者模式（按 S 键弹出独立窗口显示逐字稿、计时器等）。
+        </p>
+      </div>
+    </div>
+
+    <div class="update-section fade-in">
+      <div class="update-header">
+        <span class="update-badge badge-update">评价更新</span>
+        <div>
+          <h3 class="update-title">guizang-ppt-skill</h3>
+          <p class="update-subtitle">新增个人审美评价</p>
+        </div>
+      </div>
+      <div class="card" style="background: var(--surface-2); border: none; box-shadow: none;">
+        <p class="skill-desc">非常火爆的 html-ppt 生成工具，用来生成 ppt。但是：</p>
+        <div class="quote" style="border-color: var(--warn); background: var(--surface);">
+          "这个生成的 skill 是那种瑞士风的，不是很好看个人觉得——除非有个人的需要"
+        </div>
+        <p class="skill-desc" style="margin-top: 16px;">
+         它的功能与 html-ppt 重叠，建议适合特定项目及智能体安装，不适合全局安装。
+        </p>
+      </div>
+    </div>
+
+    <div class="update-section fade-in">
+      <div class="update-header">
+        <span class="update-badge badge-update">内容调整</span>
+        <div>
+          <h3 class="update-title">Baoyu-skill</h3>
+          <p class="update-subtitle">描述大幅简化，保留了核心定位</p>
+        </div>
+      </div>
+      <div class="card" style="background: var(--surface-2); border: none; box-shadow: none;">
+        <p class="skill-desc">之前版本有详细的功能列表介绍（如 baoyu-xhs-images、baoyu-infographic 等子技能），新版简化为：</p>
+        <div class="quote" style="border-color: var(--accent-2); background: var(--surface);">
+          "baoyu-skills 是一套偏'创作者工作流'的 Agent 技能包，核心不是写代码，而是把 AI Agent 变成一个能帮你采集资料、处理文章、生成图片/漫画/图表/幻灯片、发布到社媒或公众号的内容生产助手"
+        </div>
+        <p class="skill-desc" style="margin-top: 16px;">
+          建议适合特定项目及智能体安装，不适合全局安装。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Category Change Section -->
+<section class="section">
+  <div class="scroll-container">
+    <div class="section-header fade-in">
+      <span class="section-eyebrow">Restructured</span>
+      <h2 class="section-title">分类调整</h2>
+      <p class="section-desc">技能分类体系的变化</p>
+    </div>
+
+    <div class="update-section fade-in">
+      <div class="update-header">
+        <span class="update-badge badge-update">分类更名</span>
+        <div>
+          <h3 class="update-title">自媒体 → 办公</h3>
+          <p class="update-subtitle">第二章的分类名称发生变化</p>
+        </div>
+      </div>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>项目</th>
+            <th>旧版（6月3日）</th>
+            <th>新版（6月8日）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>第一章</td>
+            <td>基础维护</td>
+            <td>基础维护 <span class="status status-global">不变</span></td>
+          </tr>
+          <tr>
+            <td>第二章</td>
+            <td>自媒体</td>
+            <td><strong style="color: var(--accent);">办公</strong> <span class="status status-update">已更新</span></td>
+          </tr>
+          <tr>
+            <td>第三章</td>
+            <td>开发</td>
+            <td>开发 <span class="status status-global">不变</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="skill-desc" style="margin-top: 24px;">
+        内容结构保持不变，只是将"自媒体"更名为"办公"，反映了这些技能的应用场景更加广泛，不仅限于自媒体创作，也适用于日常办公场景。
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Global Installation Guide -->
+<section class="section">
+  <div class="scroll-container">
+    <div class="section-header fade-in">
+      <span class="section-eyebrow">Installation Guide</span>
+      <h2 class="section-title">全局安装建议汇总</h2>
+      <p class="section-desc">根据个人学习总结的全局安装推荐</p>
+    </div>
+
+    <div class="card fade-in">
+      <h3 style="margin-bottom: 24px; font-size: 20px;">✅ 推荐全局安装</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--good);"></span>
+          <strong>Tavily-search</strong>
+          <span style="color: var(--text-3); font-size: 13px;">AI 搜索器，无噪音</span>
+        </div>
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--good);"></span>
+          <strong>Html-ppt</strong>
+          <span style="color: var(--text-3); font-size: 13px;">生成 HTML演示文稿</span>
+        </div>
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--good);"></span>
+          <strong>Ppt-master</strong>
+          <span style="color: var(--text-3); font-size: 13px;">火爆的 PPT 生成工具</span>
+        </div>
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--good);"></span>
+          <strong>Hugging Face</strong>
+          <span style="color: var(--text-3); font-size: 13px;">官方插件，ML 协作</span>
+        </div>
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--good);"></span>
+          <strong>Superpowers</strong>
+          <span style="color: var(--text-3); font-size: 13px;">开发技能包</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card fade-in" style="margin-top: 24px;">
+      <h3 style="margin-bottom: 24px; font-size: 20px;">⚠️ 特定项目安装</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--warn);"></span>
+          <strong>awesome-claude-code</strong>
+          <span style="color: var(--text-3); font-size: 13px;">资源索引</span>
+        </div>
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--warn);"></span>
+          <strong>taste-skill</strong>
+          <span style="color: var(--text-3); font-size: 13px;">设计品味提升</span>
+        </div>
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--warn);"></span>
+          <strong>SuperClaude</strong>
+          <span style="color: var(--text-3); font-size: 13px;">结构化开发</span>
+        </div>
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--warn);"></span>
+          <strong>Hyperframes</strong>
+          <span style="color: var(--text-3); font-size: 13px;">HTML 转视频动效</span>
+        </div>
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--warn);"></span>
+          <strong>Remotion</strong>
+          <span style="color: var(--text-3); font-size: 13px;">代码生成视频</span>
+        </div>
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--warn);"></span>
+          <strong>Baoyu-skill</strong>
+          <span style="color: var(--text-3); font-size: 13px;">内容创作工作台</span>
+        </div>
+       <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--warn);"></span>
+          <strong>guizang-ppt-skill</strong>
+          <span style="color: var(--text-3); font-size: 13px;">瑞士风 PPT</span>
+        </div>
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--warn);"></span>
+          <strong>frontend-slides</strong>
+          <span style="color: var(--text-3); font-size: 13px;">功能重复</span>
+        </div>
+       <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--warn);"></span>
+          <strong>Humanize</strong>
+          <span style="color: var(--text-3); font-size: 13px;">去除 AI 味道</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card fade-in" style="margin-top: 24px;">
+      <h3 style="margin-bottom: 24px; font-size: 20px;">❌ 不建议安装</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--bad);"></span>
+          <strong>Self-improving-agent</strong>
+          <span style="color: var(--text-3); font-size: 13px;">CC 说没必要</span>
+        </div>
+        <div style="padding: 16px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--bad);"></span>
+          <strong>Proactive-agent</strong>
+          <span style="color: var(--text-3); font-size: 13px;">CC 说没必要</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Key Insights Section -->
+<section class="section">
+  <div class="scroll-container">
+    <div class="section-header fade-in">
+      <span class="section-eyebrow">Insights</span>
+      <h2 class="section-title">关键洞察</h2>
+      <p class="section-desc">本次学习的心得与思考</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card fade-in">
+        <h3 style="font-size: 20px; margin-bottom: 16px;">🎯 技能安装策略</h3>
+        <p class="skill-desc">
+          全局安装应该控制在5 个左右最常用的核心技能，其余根据项目需求灵活选择。
+          Tavily-search、Html-ppt、Ppt-master、Hugging Face、Superpowers 是目前推荐的全局安装组合。
+        </p>
+      </div>
+
+      <div class="card fade-in stagger-1">
+        <h3 style="font-size: 20px; margin-bottom: 16px;">📚 持续学习心态</h3>
+        <p class="skill-desc">
+          Claude Code 的技能生态正在快速演进，保持学习和尝试的态度很重要。
+          像 awesome-claude-code 这样的资源索引工具，可以帮助我们持续跟踪最新的优质技能。
+        </p>
+      </div>
+
+      <div class="card fade-in stagger-2">
+        <h3 style="font-size: 20px; margin-bottom: 16px;">🎨 设计思维崛起</h3>
+        <p class="skill-desc">
+          taste-skill 的出现反映了 AI 生成内容的"品味"问题正在受到重视。
+          未来能够区分 AI 输出的差异，可能比技能本身更重要。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>Claude Code Skills 学习日志 · 2026年6月8日</p>
+  <p style="margin-top: 8px; opacity: .7;">基于 Html-ppt 技能生成 · Tokyo Night 主题</p>
+  <p style="margin-top: 16px; opacity: .5;">学习笔记 · 持续更新中</p>
+</footer>
+
+<script>
+  // Scroll animation observer
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.querySelector(this.getAttribute('href')).scrollIntoView({
+        behavior: 'smooth'
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
