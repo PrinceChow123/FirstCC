@@ -28,6 +28,53 @@
   .wm-check { color: var(--brand-cyan); }
   .wm-cross { color: var(--brand-orange); }
   .wm-code { background: rgba(0,0,0,0.4); padding: 12px 18px; border-radius: 8px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; line-height: 1.6; overflow-x: auto; }
+
+  /* ─── Mobile Navigation ─── */
+  .nav-btn {
+    position: fixed; bottom: 24px; z-index: 9999;
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(0,212,170,0.15); border: 1px solid rgba(0,212,170,0.4);
+    color: var(--brand-cyan); font-size: 22px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s; user-select: none; -webkit-tap-highlight-color: transparent;
+  }
+  .nav-btn:active { background: rgba(0,212,170,0.35); transform: scale(0.92); }
+  .nav-btn.prev { left: 24px; }
+  .nav-btn.next { right: 24px; }
+  .slide-indicator {
+    position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%); z-index: 9999;
+    font-size: 13px; color: var(--text-2); pointer-events: none;
+    background: rgba(0,0,0,0.5); padding: 4px 14px; border-radius: 12px;
+  }
+
+  /* ─── Mobile Responsive ─── */
+  @media (max-width: 768px) {
+    .slide { padding: 20px 16px 80px !important; }
+    .slide.center.tc { padding: 40px 16px 80px !important; display: flex !important; align-items: center !important; justify-content: center !important; }
+    h1, .h1 { font-size: 24px !important; }
+    h2, .h2 { font-size: 20px !important; }
+    h3, .h3 { font-size: 16px !important; }
+    .lede { font-size: 14px !important; }
+    .kicker { font-size: 11px !important; }
+    .wm-stat-num { font-size: 42px !important; }
+    .wm-stat-label { font-size: 11px !important; }
+    .grid.g2, .grid.g3, .grid.g4 { grid-template-columns: 1fr !important; gap: 12px !important; }
+    .wm-flow { flex-direction: column !important; gap: 12px !important; }
+    .wm-flow-arrow { transform: rotate(90deg); font-size: 20px; }
+    .wm-table { font-size: 10px !important; }
+    .wm-table th, .wm-table td { padding: 5px 6px !important; }
+    .card { padding: 16px 14px !important; }
+    .card h4 { font-size: 14px !important; }
+    .card p, .card .dim { font-size: 12px !important; }
+    .mt-l { margin-top: 16px !important; }
+    .nav-btn { width: 40px; height: 40px; font-size: 18px; bottom: 16px; }
+    .nav-btn.prev { left: 12px; }
+    .nav-btn.next { right: 12px; }
+    .slide-indicator { bottom: 24px; font-size: 11px; }
+    .deck-footer { font-size: 10px !important; }
+    pre, .wm-code { font-size: 10px !important; padding: 8px 12px !important; }
+  }
 </style>
 </head>
 <body data-themes="tokyo-night,dracula,catppuccin-mocha,blueprint,nord,engineering-whiteprint,corporate-clean" data-theme-base="ppt-assets/themes/">
@@ -267,4 +314,68 @@
 
 </div>
 <script src="ppt-assets/runtime.js"></script>
+
+<!-- Mobile Navigation Controls -->
+<div class="nav-btn prev" id="navPrev" title="上一页">◂</div>
+<div class="nav-btn next" id="navNext" title="下一页">▸</div>
+<div class="slide-indicator" id="slideIndicator">1 / 10</div>
+
+<script>
+(function() {
+  var total = 10;
+  var btns = { prev: document.getElementById('navPrev'), next: document.getElementById('navNext') };
+  var indicator = document.getElementById('slideIndicator');
+
+  function getIndex() {
+    var hash = window.location.hash;
+    var m = hash.match(/#\/(\d+)/);
+    return m ? parseInt(m[1]) : 1;
+  }
+  function goTo(n) {
+    if (n < 1 || n > total) return;
+    window.location.hash = '#/' + n;
+    updateUI(n);
+  }
+  function updateUI(n) {
+    indicator.textContent = n + ' / ' + total;
+    btns.prev.style.opacity = n <= 1 ? '0.3' : '1';
+    btns.next.style.opacity = n >= total ? '0.3' : '1';
+  }
+
+  // Button clicks
+  btns.prev.addEventListener('click', function(e) { e.preventDefault(); goTo(getIndex() - 1); });
+  btns.next.addEventListener('click', function(e) { e.preventDefault(); goTo(getIndex() + 1); });
+
+  // Touch swipe
+  var touchStartX = 0, touchStartY = 0;
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    var dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+      goTo(getIndex() + (dx < 0 ? 1 : -1));
+    }
+  });
+
+  // Keyboard arrows (fallback if runtime.js doesn't load)
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); goTo(getIndex() + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goTo(getIndex() - 1); }
+  });
+
+  // Init
+  updateUI(getIndex());
+  window.addEventListener('hashchange', function() { updateUI(getIndex()); });
+
+  // Detect desktop → show buttons as semi-transparent, enlarge on hover
+  if (!('ontouchstart' in window)) {
+    var style = document.createElement('style');
+    style.textContent = '.nav-btn { opacity: 0.4; } .nav-btn:hover { opacity: 1; } @media (max-width: 768px) { .nav-btn { opacity: 1 !important; } }';
+    document.head.appendChild(style);
+  }
+})();
+</script>
 </body></html>
