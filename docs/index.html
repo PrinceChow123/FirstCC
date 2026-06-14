@@ -82,7 +82,7 @@
   }
   .cards {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 24px;
     margin-top: 2em;
   }
@@ -149,6 +149,9 @@
     letter-spacing: 0.03em;
   }
   .footer span { color: var(--cyan); }
+  @media (max-width: 800px) {
+    .cards { grid-template-columns: 1fr 1fr; }
+  }
   @media (max-width: 600px) {
     .cards { grid-template-columns: 1fr; }
     h1 { font-size: 2rem; }
@@ -177,6 +180,12 @@
       <h3>技术版</h3>
       <p>完整技术设计文档<br>架构图、模型选型、代码方案</p>
       <div class="badge">11 章节 · 15 页</div>
+    </a>
+    <a class="card" href="phase-report-m6-ppt.html">
+      <div class="icon">🚀</div>
+      <h3>M6 进展</h3>
+      <p>训练管线阶段报告<br>LoRA 微调 · 跨平台方案</p>
+      <div class="badge">10 页 · 滚动演示</div>
     </a>
   </div>
 
