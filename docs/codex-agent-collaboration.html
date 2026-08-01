@@ -114,6 +114,13 @@
       color: var(--text);
     }
 
+    .chapter-link[aria-current="location"] {
+      border-left-color: var(--agent-a);
+      background: rgba(45, 212, 191, .1);
+      color: var(--text);
+      font-weight: 700;
+    }
+
     .mobile-chapter-nav { display: none; }
 
     .reading-canvas {
@@ -451,6 +458,7 @@
     .delegation-lifecycle li:last-child::after { display: none; }
 
     .code-panel {
+      position: relative;
       margin: 28px 0;
       padding: 24px 26px;
       overflow-x: auto;
@@ -465,6 +473,32 @@
     }
 
     .code-panel code { font: inherit; }
+
+    .copy-button {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      min-height: 44px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background: var(--surface-raised);
+      color: var(--text);
+      cursor: pointer;
+      font: 700 12px/1 var(--sans);
+    }
+
+    .copy-button:hover { border-color: var(--agent-a); color: var(--agent-a); }
+
+    .copy-status {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
 
     details {
       margin-top: 30px;
@@ -507,14 +541,21 @@
     }
 
     .back-to-top {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 15;
       display: inline-flex;
       min-height: 44px;
       align-items: center;
       padding: 8px 14px;
       border: 1px solid var(--border);
+      background: rgba(14, 23, 42, .96);
       color: var(--muted);
       text-decoration: none;
     }
+
+    .back-to-top[hidden] { display: none; }
 
     .back-to-top:hover { border-color: var(--agent-a); color: var(--text); }
 
@@ -533,16 +574,31 @@
         position: sticky;
         top: 0;
         z-index: 10;
+        display: block;
+        margin-top: 0;
+        border-bottom: 1px solid var(--border);
+        background: rgba(8, 13, 26, .96);
+      }
+
+      .mobile-chapter-nav summary {
+        display: flex;
+        min-height: 52px;
+        align-items: center;
+        padding: 12px 18px;
+        color: var(--text);
+        font: 700 13px/1.2 var(--mono);
+        letter-spacing: .08em;
+      }
+
+      .mobile-chapter-nav nav {
         display: flex;
         gap: 4px;
         overflow-x: auto;
-        padding: 8px 14px;
-        border-bottom: 1px solid var(--border);
-        background: rgba(8, 13, 26, .96);
+        padding: 0 14px 8px;
         scrollbar-width: thin;
       }
 
-      .mobile-chapter-nav a {
+      .mobile-chapter-nav .chapter-link {
         display: inline-flex;
         min-width: 44px;
         min-height: 44px;
@@ -556,7 +612,12 @@
         text-decoration: none;
       }
 
-      .mobile-chapter-nav a:hover { border-color: var(--border); color: var(--text); }
+      .mobile-chapter-nav .chapter-link:hover,
+      .mobile-chapter-nav .chapter-link[aria-current="location"] {
+        border-color: var(--agent-a);
+        background: rgba(45, 212, 191, .1);
+        color: var(--text);
+      }
 
       .reading-canvas {
         width: 100%;
@@ -631,6 +692,7 @@
       .delegation-lifecycle li { min-height: auto; }
       .code-panel { padding: 20px 18px; }
       .checklist-panel { padding: 20px 18px 20px 40px; }
+      .back-to-top { right: 18px; bottom: 18px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -690,18 +752,21 @@
     </nav>
   </aside>
 
-  <nav class="mobile-chapter-nav" aria-label="移动端章节导航">
-    <a href="#quick-conclusion" aria-label="01 快速结论">01</a>
-    <a href="#agent-session" aria-label="02 Agent 与会话">02</a>
-    <a href="#subagent-context" aria-label="03 子 Agent 上下文">03</a>
-    <a href="#inheritance" aria-label="04 配置继承边界">04</a>
-    <a href="#cross-workspace" aria-label="05 跨工作区协作">05</a>
-    <a href="#b-directs-a" aria-label="06 Agent B 指挥 Agent A">06</a>
-    <a href="#mcp-config" aria-label="07 MCP 配置">07</a>
-    <a href="#thread-continuity" aria-label="08 线程续传">08</a>
-    <a href="#handoff" aria-label="09 交接与验收">09</a>
-    <a href="#safety" aria-label="10 安全检查">10</a>
-  </nav>
+  <details class="mobile-chapter-nav">
+    <summary>章节导航</summary>
+    <nav aria-label="移动端章节导航">
+      <a class="chapter-link" href="#quick-conclusion" aria-label="01 快速结论">01</a>
+      <a class="chapter-link" href="#agent-session" aria-label="02 Agent 与会话">02</a>
+      <a class="chapter-link" href="#subagent-context" aria-label="03 子 Agent 上下文">03</a>
+      <a class="chapter-link" href="#inheritance" aria-label="04 配置继承边界">04</a>
+      <a class="chapter-link" href="#cross-workspace" aria-label="05 跨工作区协作">05</a>
+      <a class="chapter-link" href="#b-directs-a" aria-label="06 Agent B 指挥 Agent A">06</a>
+      <a class="chapter-link" href="#mcp-config" aria-label="07 MCP 配置">07</a>
+      <a class="chapter-link" href="#thread-continuity" aria-label="08 线程续传">08</a>
+      <a class="chapter-link" href="#handoff" aria-label="09 交接与验收">09</a>
+      <a class="chapter-link" href="#safety" aria-label="10 安全检查">10</a>
+    </nav>
+  </details>
 
   <main id="main-content" class="reading-canvas">
     <header>
@@ -801,7 +866,7 @@
 将 Agent A 视为独立执行环境：不要假设 A 继承 B 的项目配置或旧会话。
 每次委派须给出目标、文件范围、禁止事项、验收命令和回传合同。
 先验证 A 的 deliverables 与 verification；未达标时只用 threadId 发出有界反馈。
-不得把凭据、令牌、二维码或不必要的私人上下文放进任务提示。</code></pre>
+不得把凭据、令牌、二维码或不必要的私人上下文放进任务提示。</code><button class="copy-button" type="button" aria-label="复制这段配置" onclick="copyText(this)">复制</button></pre>
     </section>
 
     <section id="mcp-config">
@@ -814,14 +879,14 @@ cwd = "/absolute/path/to/workspace-A"
 env = { CODEX_HOME = "/absolute/path/to/codex-home-A" }
 startup_timeout_sec = 20
 tool_timeout_sec = 3600
-required = true</code></pre>
+required = true</code><button class="copy-button" type="button" aria-label="复制这段配置" onclick="copyText(this)">复制</button></pre>
       <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> <code>cwd</code> 选择 A 的项目环境；<code>CODEX_HOME</code> 选择 A 的全局状态（包括本地 memories 的位置）。两者负责不同维度，不能相互替代。</p>
       <pre class="copy-block code-panel" aria-label="首次 codex 请求"><code>codex({
   prompt: "在 workspace-A 中实现已批准的任务；只修改任务合同列出的文件，并回传结果合同。",
   cwd: "/absolute/path/to/workspace-A",
   sandbox: "workspace-write",
   "approval-policy": "on-request"
-})</code></pre>
+})</code><button class="copy-button" type="button" aria-label="复制这段配置" onclick="copyText(this)">复制</button></pre>
       <p><span class="content-label recommended-workflow">推荐工作流</span> 选择最小必要权限，并在 B 中限制工具暴露。<span class="content-label documented-behavior">已记录的 Codex 行为</span> 即使审批策略为 <code>never</code>，它也只是改变审批行为，绝不增加 sandbox 或系统权限。</p>
     </section>
 
@@ -832,7 +897,7 @@ required = true</code></pre>
       <pre class="copy-block code-panel" aria-label="codex-reply 续传请求"><code>codex-reply({
   threadId: "returned-thread-id",
   prompt: "验收未通过：请仅修复第 2 项，重新运行 npm test，并按结果合同回传。"
-})</code></pre>
+})</code><button class="copy-button" type="button" aria-label="复制这段配置" onclick="copyText(this)">复制</button></pre>
       <details>
         <summary>何时不要续传旧线程？</summary>
         <p><span class="content-label recommended-workflow">推荐工作流</span> 当任务目标、权限范围或受信任项目发生实质变化时，创建新任务和新线程更可审计；不要借助旧上下文绕过新的边界。</p>
@@ -847,7 +912,7 @@ required = true</code></pre>
 允许修改：&lt;文件或目录列表&gt;
 禁止修改：&lt;边界列表&gt;
 验收：&lt;命令与预期结果&gt;
-回传：按结果合同提供状态、交付物、验证、阻塞项和下一步。</code></pre>
+回传：按结果合同提供状态、交付物、验证、阻塞项和下一步。</code><button class="copy-button" type="button" aria-label="复制这段配置" onclick="copyText(this)">复制</button></pre>
       <pre class="copy-block code-panel" aria-label="A 的结果合同"><code>status: DONE | DONE_WITH_CONCERNS | BLOCKED
 deliverables:
   - &lt;变更的文件或产物&gt;
@@ -856,7 +921,7 @@ verification:
     result: &lt;精确结果&gt;
 blockers:
   - &lt;无则写 none&gt;
-next_action: &lt;B 应执行的下一步&gt;</code></pre>
+next_action: &lt;B 应执行的下一步&gt;</code><button class="copy-button" type="button" aria-label="复制这段配置" onclick="copyText(this)">复制</button></pre>
       <p><span class="content-label recommended-workflow">推荐工作流</span> 验收顺序：检查文件范围与提交差异；运行合同中的验证；审阅风险和阻塞项；仅对未达标项发送 <code>threadId</code> 返工；最后再由 B 集成已接受输出。</p>
     </section>
 
@@ -881,8 +946,92 @@ next_action: &lt;B 应执行的下一步&gt;</code></pre>
         <li><a href="https://learn.chatgpt.com/docs/developer-commands?surface=cli">Developer commands</a></li>
         <li><a href="https://learn.chatgpt.com/docs/config-file/config-advanced#config-and-state-locations">Config and state locations</a></li>
       </ul>
-      <p><a class="back-to-top" href="#main-content">回到开头</a></p>
     </section>
   </main>
+  <a class="back-to-top" href="#main-content" hidden>回到开头</a>
+  <p id="copy-status" class="copy-status" aria-live="polite" aria-atomic="true"></p>
+  <script>
+    const copyStatus = document.getElementById('copy-status');
+    const backToTop = document.querySelector('.back-to-top');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function setCopyFeedback(button, message) {
+      const originalLabel = '复制这段配置';
+      button.textContent = message;
+      button.setAttribute('aria-label', message);
+      copyStatus.textContent = message;
+      window.clearTimeout(button.copyFeedbackTimer);
+      button.copyFeedbackTimer = window.setTimeout(() => {
+        button.textContent = '复制';
+        button.setAttribute('aria-label', originalLabel);
+        copyStatus.textContent = '';
+      }, 1500);
+    }
+
+    function copyText(button) {
+      const code = button.closest('.copy-block')?.querySelector('code');
+      if (!code) return;
+
+      const text = code.textContent;
+      const copyWithSelection = () => {
+        const range = document.createRange();
+        const selection = window.getSelection();
+        range.selectNodeContents(code);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        let copied = false;
+        try {
+          copied = document.execCommand('copy');
+        } finally {
+          selection.removeAllRanges();
+        }
+        setCopyFeedback(button, copied ? '已复制' : '复制失败');
+      };
+
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(text)
+          .then(() => setCopyFeedback(button, '已复制'))
+          .catch(copyWithSelection);
+      } else {
+        copyWithSelection();
+      }
+    }
+
+    function setActiveSection(sectionId) {
+      document.querySelectorAll('.chapter-link').forEach((link) => {
+        const isCurrent = link.getAttribute('href') === `#${sectionId}`;
+        link.toggleAttribute('aria-current', isCurrent);
+        if (isCurrent) link.setAttribute('aria-current', 'location');
+      });
+    }
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      const current = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((first, second) => first.boundingClientRect.top - second.boundingClientRect.top)[0];
+      if (current) setActiveSection(current.target.id);
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+
+    document.querySelectorAll('main section').forEach((section) => sectionObserver.observe(section));
+
+    document.querySelectorAll('.chapter-link').forEach((link) => {
+      link.addEventListener('click', () => {
+        setActiveSection(link.hash.slice(1));
+        link.closest('.mobile-chapter-nav')?.removeAttribute('open');
+      });
+    });
+
+    function updateBackToTopVisibility() {
+      backToTop.hidden = window.scrollY <= 720;
+    }
+
+    window.addEventListener('scroll', updateBackToTopVisibility, { passive: true });
+    updateBackToTopVisibility();
+
+    backToTop.addEventListener('click', (event) => {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' });
+    });
+  </script>
 </body>
 </html>
