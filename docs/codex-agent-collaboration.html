@@ -30,19 +30,20 @@
       <p>CODEX AGENT ATLAS</p>
       <h1>子 Agent 与跨工作区协作</h1>
       <p>给需要在多个 Codex 环境之间协作、交接和复核的工程实践手册。</p>
+      <p><strong>标注约定：</strong><span class="content-label documented-behavior">已记录的 Codex 行为</span> 表示关于会话、配置或运行环境的事实说明；<span class="content-label recommended-workflow">推荐工作流</span> 表示本手册建议采用的工程做法。两类内容不会互相替代。</p>
     </header>
 
     <section id="quick-conclusion">
       <h2>01. 快速结论</h2>
-      <p><strong>不要复制 Agent A，而要调用一个真正运行在 A 环境中的 Codex 实例。</strong></p>
-      <p>对话上下文独立，项目文件环境通常共享。一个名字、一个角色提示或一个子 Agent 标签，都不会把另一个工作区的项目说明、工具配置和会话自动装入当前 Agent。</p>
-      <p>推荐把 B 设为协调者：B 分解任务、调用 A、验证结果并决定是否返工；A 在自己的工作目录、项目说明和必要的全局状态下完成执行。</p>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> <strong>不要复制 Agent A，而要调用一个真正运行在 A 环境中的 Codex 实例。</strong></p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 对话上下文独立，项目文件环境通常共享。一个名字、一个角色提示或一个子 Agent 标签，都不会把另一个工作区的项目说明、工具配置和会话自动装入当前 Agent。</p>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 把 B 设为协调者：B 分解任务、调用 A、验证结果并决定是否返工；A 在自己的工作目录、项目说明和必要的全局状态下完成执行。</p>
     </section>
 
     <section id="agent-session">
       <h2>02. Agent 与会话</h2>
-      <p><dfn>Agent</dfn> 是角色和运行环境的组合：有效工作目录、项目 <code>AGENTS.md</code>、配置、技能、权限和可用工具共同决定它如何工作。<dfn>会话</dfn>则是一条可续传的对话线程，保存此前的消息和该线程的任务脉络。</p>
-      <p>因此不能把“我是 Agent A”理解为“我已经进入 A 的环境”。同一个角色可在多个线程中运行；同一个线程也不会因为改名而迁移到另一工作区。</p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> <dfn>Agent</dfn> 是角色和运行环境的组合：有效工作目录、项目 <code>AGENTS.md</code>、配置、技能、权限和可用工具共同决定它如何工作。<dfn>会话</dfn>则是一条可续传的对话线程，保存此前的消息和该线程的任务脉络。</p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 不能把“我是 Agent A”理解为“我已经进入 A 的环境”。同一个角色可在多个线程中运行；同一个线程也不会因为改名而迁移到另一工作区。</p>
       <dl>
         <dt>角色配置</dt><dd>定义执行时可用的环境与规则。</dd>
         <dt>会话线程</dt><dd>以 <code>threadId</code> 标识，用于在同一对话脉络上继续追问。</dd>
@@ -52,35 +53,36 @@
 
     <section id="subagent-context">
       <h2>03. 子 Agent 上下文</h2>
-      <p>普通子 Agent 使用独立的 Agent 线程与上下文窗口。父 Agent 可在启动时传递任务、背景和验收条件，但子 Agent 不会自动看到父线程的全部逐字记录；同级子 Agent 之间也彼此隔离。</p>
-      <p>这不等于文件系统一定隔离：在同一 checkout 中运行的多个 Agent 可能读写同一项目文件。共享文件访问不能推导出共享对话上下文，反之亦然。并发修改同一文件仍会产生覆盖或合并冲突。</p>
-      <p>启动子 Agent 时，应把它完成任务所必需的上下文显式写入任务说明，包括目标、文件范围、禁止事项、验证命令和回传格式。</p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 普通子 Agent 使用独立的 Agent 线程与上下文窗口。父 Agent 可在启动时传递任务、背景和验收条件，但子 Agent 不会自动看到父线程的全部逐字记录；同级子 Agent 之间也彼此隔离。</p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 这不等于文件系统一定隔离：在同一 checkout 中运行的多个 Agent 可能读写同一项目文件。共享文件访问不能推导出共享对话上下文，反之亦然。并发修改同一文件仍会产生覆盖或合并冲突。</p>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 启动子 Agent 时，把它完成任务所必需的上下文显式写入任务说明，包括目标、文件范围、禁止事项、验证命令和回传格式。</p>
     </section>
 
     <section id="inheritance">
       <h2>04. 配置继承边界</h2>
-      <p>下表是工作流判断工具，不是“所有配置都会复制”的承诺。实际生效内容取决于启动方式、有效工作目录与受信任的项目配置。</p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 下表前两列说明会话与环境边界；实际生效内容取决于启动方式、有效工作目录与受信任的项目配置。<span class="content-label recommended-workflow">推荐工作流</span> 最后一列给出相应的工程做法，而不是“所有配置都会复制”的承诺。</p>
       <table>
         <caption>普通子 Agent 与独立 A 进程的边界</caption>
-        <thead><tr><th scope="col">项目</th><th scope="col">普通子 Agent</th><th scope="col">独立 A Codex 进程</th><th scope="col">实践含义</th></tr></thead>
+        <thead><tr><th scope="col">项目</th><th scope="col">已记录的 Codex 行为：普通子 Agent</th><th scope="col">已记录的 Codex 行为：独立 A Codex 进程</th><th scope="col">推荐工作流</th></tr></thead>
         <tbody>
           <tr><th scope="row">指令</th><td>默认从父级继承，除非覆盖</td><td>由 A 的有效 <code>cwd</code> 与项目配置决定</td><td>不要用名称假定会加载 A 的 <code>AGENTS.md</code>。</td></tr>
           <tr><th scope="row">模型与推理强度</th><td>默认从父级继承，除非覆盖</td><td>由子角色或启动配置决定</td><td>在任务合同中明确需要的能力与限制。</td></tr>
-          <tr><th scope="row">Sandbox 与审批</th><td>默认从父级继承，除非覆盖</td><td>由 A 的进程/调用参数决定</td><td><code>approval-policy = "never"</code> 不会额外授予权限。</td></tr>
+          <tr><th scope="row">Sandbox 与审批</th><td>默认从父级继承，除非覆盖</td><td>由 A 的进程/调用参数决定；<code>approval-policy = "never"</code> 不会额外授予权限</td><td>按最小权限设计调用边界。</td></tr>
           <tr><th scope="row">技能</th><td>默认从父级继承，除非覆盖</td><td>由子角色配置及 A 项目决定</td><td>项目技能依赖有效工作目录和受信任配置。</td></tr>
           <tr><th scope="row">MCP</th><td>默认从父级继承，除非覆盖</td><td>由 A 的配置决定</td><td>把 A 作为 MCP 服务调用可保留 A 的工具边界。</td></tr>
-          <tr><th scope="row">Memories</th><td>默认不独立命名空间</td><td>仅在独立进程或独立 <code>CODEX_HOME</code> 时隔离</td><td>不同工作区本身不会创建不同记忆库。</td></tr>
+          <tr><th scope="row">Memories</th><td>默认不独立命名空间</td><td>仅在独立进程或独立 <code>CODEX_HOME</code> 时隔离；不同工作区本身不会创建不同记忆库</td><td>需要隔离时，为 A 使用独立 <code>CODEX_HOME</code>。</td></tr>
           <tr><th scope="row">工作目录</th><td>共享运行时资源或由启动参数指定</td><td>由 A 的 <code>cwd</code> 指定</td><td><code>cwd</code> 决定项目上下文与文件作用域。</td></tr>
           <tr><th scope="row">文件系统变更</th><td>共享运行时资源</td><td>取决于 checkout 是否相同</td><td>独立对话不防止同一 checkout 的写入冲突。</td></tr>
-          <tr><th scope="row">转录历史</th><td>独立线程状态</td><td>独立线程状态，以 <code>threadId</code> 续传</td><td>旧 transcript 不等于技能、项目配置或生成的 memories。</td></tr>
+          <tr><th scope="row">转录历史</th><td>独立线程状态</td><td>独立线程状态，以 <code>threadId</code> 续传；旧 transcript 不等于技能、项目配置或生成的 memories</td><td>用任务合同保存续传所需标识，不把旧线程当作环境配置。</td></tr>
         </tbody>
       </table>
     </section>
 
     <section id="cross-workspace">
       <h2>05. 跨工作区协作</h2>
-      <p>选择结构前先分清：谁拥有最终决策、谁能写哪些文件、以及结果如何被复核。</p>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 选择结构前先分清：谁拥有最终决策、谁能写哪些文件、以及结果如何被复核。</p>
       <table>
+        <caption><span class="content-label recommended-workflow">推荐工作流</span> 按任务边界选择协作模式</caption>
         <thead><tr><th scope="col">模式</th><th scope="col">适用场景</th><th scope="col">优点</th><th scope="col">风险与补偿</th></tr></thead>
         <tbody>
           <tr><th scope="row">共享父工作区</th><td>小任务、同一项目</td><td>交接成本低</td><td>写入冲突高；分配互斥文件范围。</td></tr>
@@ -88,12 +90,12 @@
           <tr><th scope="row">自动协调者调用执行者</th><td>可重复的跨工作区任务</td><td>B 可复核、返工并保留 A 的环境</td><td>需配置 MCP、超时和信任边界；这是推荐模式。</td></tr>
         </tbody>
       </table>
-      <p>若需要真正隔离文件改动，请使用不同 checkout（例如 worktree）；只创建新会话不能隔离磁盘写入。</p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 只创建新会话不能隔离磁盘写入。<span class="content-label recommended-workflow">推荐工作流</span> 若需要真正隔离文件改动，请使用不同 checkout（例如 worktree）。</p>
     </section>
 
     <section id="b-directs-a">
       <h2>06. Agent B 指挥 Agent A</h2>
-      <p>B 是监督者，A 是在独立环境中执行的 Codex 实例。B 不复制 A 的配置；B 通过 A 的 MCP 服务发送有边界的任务并读取回传。</p>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> B 是监督者，A 是在独立环境中执行的 Codex 实例。B 不复制 A 的配置；B 通过 A 的 MCP 服务发送有边界的任务并读取回传。</p>
       <pre aria-label="B 指挥 A 的架构图"><code>Agent B（supervisor）
   └─ 控制流 ──&gt; Agent A MCP server
                     └─&gt; 独立 Codex process
@@ -105,6 +107,7 @@
                          └─ A thread identified by threadId
 
 结果流：Agent A ──&gt; Agent B</code></pre>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 将任务闭环执行为：</p>
       <ol>
         <li>B 分解任务，明确 A 的文件范围与验收标准。</li>
         <li>B 调用 <code>codex(prompt, cwd=A)</code>，A 执行并回传内容和 <code>threadId</code>。</li>
@@ -121,7 +124,7 @@
 
     <section id="mcp-config">
       <h2>07. MCP 配置</h2>
-      <p>在 B 的 <code>.codex/config.toml</code> 中注册 A 的 MCP 服务。下面是安全基线：路径是占位符，<code>CODEX_HOME</code> 为 A 提供独立的全局状态位置。</p>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 在 B 的 <code>.codex/config.toml</code> 中注册 A 的 MCP 服务。下面是安全基线：路径是占位符，<code>CODEX_HOME</code> 为 A 提供独立的全局状态位置。</p>
       <pre class="copy-block" aria-label="Agent A MCP 安全基线"><code>[mcp_servers.agent_a]
 command = "codex"
 args = ["mcp-server"]
@@ -130,33 +133,33 @@ env = { CODEX_HOME = "/absolute/path/to/codex-home-A" }
 startup_timeout_sec = 20
 tool_timeout_sec = 3600
 required = true</code></pre>
-      <p><code>cwd</code> 选择 A 的项目环境；<code>CODEX_HOME</code> 选择 A 的全局状态（包括本地 memories 的位置）。两者负责不同维度，不能相互替代。</p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> <code>cwd</code> 选择 A 的项目环境；<code>CODEX_HOME</code> 选择 A 的全局状态（包括本地 memories 的位置）。两者负责不同维度，不能相互替代。</p>
       <pre class="copy-block" aria-label="首次 codex 请求"><code>codex({
   prompt: "在 workspace-A 中实现已批准的任务；只修改任务合同列出的文件，并回传结果合同。",
   cwd: "/absolute/path/to/workspace-A",
   sandbox: "workspace-write",
   "approval-policy": "on-request"
 })</code></pre>
-      <p>选择最小必要权限，并在 B 中限制工具暴露。即使审批策略为 <code>never</code>，它也只是改变审批行为，绝不增加 sandbox 或系统权限。</p>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 选择最小必要权限，并在 B 中限制工具暴露。<span class="content-label documented-behavior">已记录的 Codex 行为</span> 即使审批策略为 <code>never</code>，它也只是改变审批行为，绝不增加 sandbox 或系统权限。</p>
     </section>
 
     <section id="thread-continuity">
       <h2>08. 线程续传</h2>
-      <p>首次 <code>codex</code> 调用创建 A 的会话并返回 <code>threadId</code>。将该标识与任务合同一起保存；B 对同一任务的后续反馈用 <code>codex-reply</code> 发回相同线程，从而保留该次执行的对话脉络。</p>
-      <p><strong>cwd 决定项目上下文，CODEX_HOME 决定全局状态，threadId 决定会话续传。</strong>其中任何一个都不能替代另外两个。持久配置或 memory 可以影响未来启动，但它们不是一条旧对话 transcript。</p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 首次 <code>codex</code> 调用创建 A 的会话并返回 <code>threadId</code>。<span class="content-label recommended-workflow">推荐工作流</span> 将该标识与任务合同一起保存；B 对同一任务的后续反馈用 <code>codex-reply</code> 发回相同线程，从而保留该次执行的对话脉络。</p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> <strong>cwd 决定项目上下文，CODEX_HOME 决定全局状态，threadId 决定会话续传。</strong>其中任何一个都不能替代另外两个。持久配置或 memory 可以影响未来启动，但它们不是一条旧对话 transcript。</p>
       <pre class="copy-block" aria-label="codex-reply 续传请求"><code>codex-reply({
   threadId: "returned-thread-id",
   prompt: "验收未通过：请仅修复第 2 项，重新运行 npm test，并按结果合同回传。"
 })</code></pre>
       <details>
         <summary>何时不要续传旧线程？</summary>
-        <p>当任务目标、权限范围或受信任项目发生实质变化时，创建新任务和新线程更可审计；不要借助旧上下文绕过新的边界。</p>
+        <p><span class="content-label recommended-workflow">推荐工作流</span> 当任务目标、权限范围或受信任项目发生实质变化时，创建新任务和新线程更可审计；不要借助旧上下文绕过新的边界。</p>
       </details>
     </section>
 
     <section id="handoff">
       <h2>09. 交接与验收</h2>
-      <p>交接应是结构化接口，不是“完成了”的一句话。B 先给 A 任务合同，再根据结果合同验收；返工也必须带范围，避免一次反馈扩张成无边界重做。</p>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 交接应是结构化接口，不是“完成了”的一句话。B 先给 A 任务合同，再根据结果合同验收；返工也必须带范围，避免一次反馈扩张成无边界重做。</p>
       <pre class="copy-block" aria-label="任务合同模板"><code>任务：&lt;明确目标&gt;
 工作目录：/absolute/path/to/workspace-A
 允许修改：&lt;文件或目录列表&gt;
@@ -172,11 +175,12 @@ verification:
 blockers:
   - &lt;无则写 none&gt;
 next_action: &lt;B 应执行的下一步&gt;</code></pre>
-      <p>验收顺序：检查文件范围与提交差异；运行合同中的验证；审阅风险和阻塞项；仅对未达标项发送 <code>threadId</code> 返工；最后再由 B 集成已接受输出。</p>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 验收顺序：检查文件范围与提交差异；运行合同中的验证；审阅风险和阻塞项；仅对未达标项发送 <code>threadId</code> 返工；最后再由 B 集成已接受输出。</p>
     </section>
 
     <section id="safety">
       <h2>10. 安全检查</h2>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 将下列项目作为每次委派和集成前的检查清单：</p>
       <ul>
         <li>为每个执行者指定最小权限、明确 <code>cwd</code> 和可写文件范围。</li>
         <li>不在配置、提示、日志或交接物中放入凭据、令牌、二维码或机器专属秘密。</li>
