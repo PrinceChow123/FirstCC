@@ -492,6 +492,13 @@
 
     li::marker { color: var(--agent-a); }
 
+    .prohibition {
+      color: var(--danger);
+      font-weight: 650;
+    }
+
+    .prohibition::marker { color: var(--danger); }
+
     .reference-list {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -545,7 +552,7 @@
         padding: 8px 12px;
         border: 1px solid transparent;
         color: var(--muted);
-        font: 700 13px/1 var(--mono);
+        font: 700 16px/1 var(--mono);
         text-decoration: none;
       }
 
@@ -556,6 +563,20 @@
         margin-left: 0;
         padding: 52px 32px 88px;
       }
+
+      .reading-canvas header > p:first-child,
+      .reading-canvas .content-label,
+      .reading-canvas table,
+      .reading-canvas .agent-node span,
+      .reading-canvas .flow-edge,
+      .reading-canvas .bridge-node,
+      .reading-canvas .context-control::before,
+      .reading-canvas .context-control span,
+      .reading-canvas .code-panel {
+        font-size: 16px;
+      }
+
+      .reading-canvas :not(pre) > code { font-size: 1em; }
 
       header { margin-bottom: 72px; }
       section { scroll-margin-top: 76px; margin-bottom: 76px; }
@@ -622,7 +643,21 @@
       .reading-canvas { width: 100%; margin: 0; padding: 0; }
       header, section, section + section { margin-bottom: 28pt; padding-top: 0; border-color: #aaa; }
       h1, h2, h3, caption, th, dfn { color: #111; }
+      header > p:first-child, .context-control::before, .delegation-lifecycle li::before { color: #111; }
       p, li, dd, td, .context-control span, .delegation-lifecycle li { color: #222; }
+      .content-label.documented-behavior {
+        border-color: #1f3b82;
+        background: #fff;
+        color: #1f3b82;
+      }
+      .content-label.recommended-workflow {
+        border-color: #075b50;
+        background: #fff;
+        color: #075b50;
+      }
+      :not(pre) > code { border-color: #777; background: #f2f2f2; color: #111; }
+      li::marker { color: #111; }
+      .prohibition, .prohibition::marker { color: #7a1f1a; }
       .conclusion-panel, .table-shell, .architecture-flow, .context-model, .context-control,
       .agent-node, .bridge-node, .delegation-lifecycle li, .code-panel, details, .checklist-panel {
         border-color: #999;
@@ -830,7 +865,7 @@ next_action: &lt;B 应执行的下一步&gt;</code></pre>
       <p><span class="content-label recommended-workflow">推荐工作流</span> 将下列项目作为每次委派和集成前的检查清单：</p>
       <ul class="checklist-panel">
         <li>为每个执行者指定最小权限、明确 <code>cwd</code> 和可写文件范围。</li>
-        <li>不在配置、提示、日志或交接物中放入凭据、令牌、二维码或机器专属秘密。</li>
+        <li class="prohibition">不在配置、提示、日志或交接物中放入凭据、令牌、二维码或机器专属秘密。</li>
         <li>同一 checkout 的并发写入要么串行化，要么按互斥文件范围拆分；需要隔离时使用独立 worktree。</li>
         <li>不要把共享文件系统误解成共享 memories 或共享对话；检查 <code>CODEX_HOME</code> 是否需要隔离。</li>
         <li>把 MCP 服务、项目指令和外部工具视为信任边界；只连接可信配置并审阅其权限。</li>
