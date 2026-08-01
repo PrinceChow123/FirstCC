@@ -1,0 +1,1171 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Codex Agent Atlas — 子 Agent 与跨工作区协作</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080d1a;
+      --surface: #0e172a;
+      --surface-raised: #111d34;
+      --border: #293754;
+      --text: #e8eef8;
+      --muted: #9aabc5;
+      --agent-b: #6f8cff;
+      --agent-a: #2dd4bf;
+      --warning: #f2b84b;
+      --danger: #f17a72;
+      --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 24px;
+    }
+
+    body {
+      display: grid;
+      grid-template-columns: 232px minmax(0, 1fr);
+      align-items: start;
+      margin: 0;
+      min-width: 320px;
+      background:
+        linear-gradient(rgba(111, 140, 255, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(111, 140, 255, .035) 1px, transparent 1px),
+        var(--bg);
+      background-size: 32px 32px;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    a { color: var(--agent-a); }
+    a:hover { color: #78eadb; }
+
+    :focus-visible { outline: 3px solid var(--agent-a); outline-offset: 3px; }
+
+    .skip-link {
+      position: fixed;
+      z-index: 20;
+      top: 12px;
+      left: 12px;
+      padding: 10px 14px;
+      border: 1px solid var(--agent-a);
+      background: var(--surface-raised);
+      color: var(--text);
+      transform: translateY(-160%);
+    }
+
+    .skip-link:focus { transform: translateY(0); }
+
+    .chapter-rail {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      width: 232px;
+      height: 100vh;
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+      background: rgba(8, 13, 26, .94);
+      backdrop-filter: blur(18px);
+    }
+
+    .chapter-rail nav { padding: 34px 20px; }
+
+    .chapter-rail nav::before {
+      display: block;
+      margin: 0 10px 24px;
+      color: var(--agent-a);
+      font: 700 12px/1.4 var(--mono);
+      letter-spacing: .14em;
+      content: "ATLAS / 10 CHAPTERS";
+    }
+
+    .chapter-rail ol {
+      display: grid;
+      gap: 4px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .chapter-link {
+      display: flex;
+      min-height: 44px;
+      align-items: center;
+      padding: 8px 10px;
+      border-left: 2px solid transparent;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+      text-decoration: none;
+    }
+
+    .chapter-link:hover,
+    .chapter-link:focus-visible {
+      border-left-color: var(--agent-b);
+      background: rgba(111, 140, 255, .09);
+      color: var(--text);
+    }
+
+    .chapter-link[aria-current="location"] {
+      border-left-color: var(--agent-a);
+      background: rgba(45, 212, 191, .1);
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .mobile-chapter-nav { display: none; }
+
+    .reading-canvas {
+      width: min(100%, 1080px);
+      margin: 0 auto;
+      padding: 72px 56px 104px;
+    }
+
+    header {
+      position: relative;
+      max-width: 900px;
+      margin-bottom: 88px;
+      padding-bottom: 42px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header::after {
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 124px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--agent-b), var(--agent-a));
+      content: "";
+    }
+
+    header > p:first-child {
+      margin: 0 0 14px;
+      color: var(--agent-a);
+      font: 700 13px/1.4 var(--mono);
+      letter-spacing: .16em;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin-top: 0;
+      color: var(--text);
+      line-height: 1.2;
+      letter-spacing: -.025em;
+    }
+
+    h1 {
+      max-width: 900px;
+      margin-bottom: 20px;
+      font-size: clamp(40px, 5vw, 64px);
+      font-weight: 760;
+    }
+
+    h2 { margin-bottom: 24px; font-size: clamp(28px, 3vw, 38px); }
+    h3 { margin-top: 42px; font-size: 22px; }
+
+    p { margin: 0 0 18px; }
+    header > p:not(:first-child),
+    section > p,
+    section > dl,
+    section > details,
+    section > ul,
+    section > ol:not(.delegation-lifecycle) { max-width: 760px; }
+
+    section {
+      scroll-margin-top: 24px;
+      margin-bottom: 96px;
+    }
+
+    section + section {
+      padding-top: 64px;
+      border-top: 1px solid rgba(41, 55, 84, .72);
+    }
+
+    code,
+    kbd,
+    pre { font-family: var(--mono); }
+
+    :not(pre) > code {
+      padding: .13em .38em;
+      border: 1px solid rgba(111, 140, 255, .24);
+      border-radius: 4px;
+      background: rgba(111, 140, 255, .09);
+      color: #cdd7ff;
+      font-size: .88em;
+    }
+
+    dfn {
+      color: var(--agent-a);
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    .content-label {
+      display: inline-flex;
+      min-height: 26px;
+      align-items: center;
+      margin: 0 6px 4px 0;
+      padding: 2px 8px;
+      border: 1px solid currentColor;
+      border-radius: 3px;
+      font: 650 12px/1.3 var(--sans);
+      letter-spacing: .02em;
+      vertical-align: middle;
+    }
+
+    .documented-behavior { color: #a9b9ff; background: rgba(111, 140, 255, .09); }
+    .recommended-workflow { color: #77e9d9; background: rgba(45, 212, 191, .08); }
+
+    .conclusion-panel {
+      padding: 32px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--agent-a);
+      background: linear-gradient(135deg, rgba(45, 212, 191, .08), rgba(14, 23, 42, .9) 45%);
+    }
+
+    .conclusion-panel h2 { margin-bottom: 26px; }
+    .conclusion-panel > p:last-child { margin-bottom: 0; }
+
+    dl {
+      display: grid;
+      grid-template-columns: minmax(120px, 160px) 1fr;
+      margin-top: 30px;
+      border-top: 1px solid var(--border);
+    }
+
+    dt,
+    dd {
+      margin: 0;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    dt { color: var(--text); font-weight: 700; }
+    dd { color: var(--muted); }
+
+    .table-shell {
+      margin: 30px 0;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      background: rgba(14, 23, 42, .78);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    caption {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 700;
+      text-align: left;
+    }
+
+    th,
+    td {
+      padding: 14px 16px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    tr:last-child > * { border-bottom: 0; }
+    tr > *:last-child { border-right: 0; }
+    thead th { background: var(--surface-raised); color: var(--text); }
+    tbody th { color: #cad4e6; font-weight: 700; }
+    tbody td { color: var(--muted); }
+    tbody tr:hover { background: rgba(111, 140, 255, .045); }
+
+    .inheritance-table tbody td:last-child { color: #c7d2e4; }
+
+    .architecture-flow {
+      margin: 34px 0;
+      padding: 28px;
+      border: 1px solid var(--border);
+      background: rgba(14, 23, 42, .82);
+    }
+
+    .architecture-flow figcaption {
+      margin-bottom: 20px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .flow-lanes {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .flow-lane {
+      position: relative;
+      z-index: 0;
+      min-height: 36px;
+      padding: 7px 42px;
+      overflow: hidden;
+      border: 1px solid currentColor;
+      color: var(--muted);
+      font: 700 12px/1.55 var(--mono);
+      text-align: center;
+    }
+
+    .flow-lane::before {
+      position: absolute;
+      z-index: -1;
+      top: 50%;
+      right: 18px;
+      left: 18px;
+      height: 1px;
+      background: currentColor;
+      content: "";
+    }
+
+    .flow-lane::after {
+      position: absolute;
+      top: calc(50% - 4px);
+      width: 8px;
+      height: 8px;
+      border-top: 1px solid currentColor;
+      border-right: 1px solid currentColor;
+      content: "";
+    }
+
+    .flow-lane span {
+      padding: 2px 9px;
+      background: var(--surface);
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    .flow-lane--control { color: var(--agent-b); }
+    .flow-lane--control::after { right: 17px; transform: rotate(45deg); }
+    .flow-lane--result { color: var(--agent-a); }
+    .flow-lane--result::after { left: 17px; transform: rotate(225deg); }
+
+    .architecture-chain {
+      display: grid;
+      grid-template-columns: minmax(125px, .8fr) 22px minmax(125px, .9fr) 22px minmax(145px, 1fr) 22px minmax(245px, 1.55fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .agent-node,
+    .bridge-node,
+    .process-node,
+    .agent-environment {
+      display: flex;
+      min-height: 126px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      border: 1px solid var(--border);
+      background: var(--surface-raised);
+      text-align: center;
+    }
+
+    .agent-node strong { font: 760 22px/1.2 var(--sans); }
+    .agent-node span { margin-top: 8px; color: var(--muted); font-size: 13px; }
+    .agent-node--b { border-top: 3px solid var(--agent-b); }
+    .agent-node--b strong { color: #b8c5ff; }
+
+    .bridge-node {
+      border-color: rgba(242, 184, 75, .55);
+      color: var(--warning);
+      font: 700 14px/1.4 var(--mono);
+    }
+
+    .process-node {
+      border-top: 3px solid var(--agent-a);
+      color: #8cecdf;
+      font: 700 15px/1.45 var(--mono);
+    }
+
+    .chain-arrow {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--agent-a);
+    }
+
+    .chain-arrow::before {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      left: 0;
+      height: 1px;
+      background: currentColor;
+      content: "";
+    }
+
+    .chain-arrow::after {
+      position: absolute;
+      top: calc(50% - 4px);
+      right: -1px;
+      width: 8px;
+      height: 8px;
+      border-top: 1px solid currentColor;
+      border-right: 1px solid currentColor;
+      content: "";
+      transform: rotate(45deg);
+    }
+
+    .agent-environment {
+      align-items: stretch;
+      justify-content: flex-start;
+      border: 1px solid rgba(45, 212, 191, .72);
+      border-top-width: 3px;
+      text-align: left;
+    }
+
+    .agent-environment > strong {
+      margin-bottom: 12px;
+      color: #8cecdf;
+      font: 700 17px/1.3 var(--sans);
+      text-align: center;
+    }
+
+    .environment-components {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .environment-components li {
+      padding: 6px 8px;
+      border: 1px solid rgba(45, 212, 191, .22);
+      background: rgba(45, 212, 191, .055);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .environment-components li::marker { content: ""; }
+
+    .environment-components code {
+      border: 0;
+      background: transparent;
+      color: #c6fff6;
+    }
+
+    .context-model {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin: 32px 0;
+      border: 1px solid var(--border);
+      background: var(--border);
+    }
+
+    .context-control {
+      min-height: 168px;
+      padding: 24px;
+      background: var(--surface);
+    }
+
+    .context-control::before {
+      display: block;
+      margin-bottom: 18px;
+      color: var(--agent-a);
+      font: 700 12px/1 var(--mono);
+      letter-spacing: .12em;
+      content: attr(data-axis);
+    }
+
+    .context-control strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text);
+      font: 700 17px/1.35 var(--mono);
+    }
+
+    .context-control span { display: block; color: var(--muted); font-size: 14px; }
+
+    .delegation-lifecycle {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 26px 0 34px;
+      padding: 0;
+      list-style: none;
+      counter-reset: lifecycle;
+    }
+
+    .delegation-lifecycle li {
+      position: relative;
+      min-height: 190px;
+      padding: 58px 20px 22px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      counter-increment: lifecycle;
+    }
+
+    .delegation-lifecycle li::before {
+      position: absolute;
+      top: 18px;
+      left: 20px;
+      color: var(--agent-b);
+      font: 700 25px/1 var(--mono);
+      content: "0" counter(lifecycle);
+    }
+
+    .delegation-lifecycle li::after {
+      position: absolute;
+      top: 31px;
+      right: -15px;
+      z-index: 2;
+      width: 14px;
+      height: 1px;
+      background: var(--agent-a);
+      content: "";
+    }
+
+    .delegation-lifecycle li:last-child::after { display: none; }
+
+    .code-panel {
+      position: relative;
+      margin: 28px 0;
+      padding: 24px 26px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--agent-b);
+      background: #0a1222;
+      color: #d6deec;
+      font-size: 14px;
+      line-height: 1.65;
+      tab-size: 2;
+      white-space: pre;
+    }
+
+    .code-panel code { font: inherit; }
+
+    .copy-button {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      min-height: 44px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background: var(--surface-raised);
+      color: var(--text);
+      cursor: pointer;
+      font: 700 12px/1 var(--sans);
+    }
+
+    .copy-button:hover { border-color: var(--agent-a); color: var(--agent-a); }
+
+    .copy-status {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    details {
+      margin-top: 30px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    summary {
+      min-height: 48px;
+      padding: 10px 16px;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    details p { padding: 0 16px 16px; }
+
+    .checklist-panel {
+      margin-top: 26px;
+      padding: 24px 28px 24px 50px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--warning);
+      background: rgba(14, 23, 42, .88);
+    }
+
+    li::marker { color: var(--agent-a); }
+
+    .prohibition {
+      color: var(--danger);
+      font-weight: 650;
+    }
+
+    .prohibition::marker { color: var(--danger); }
+
+    .reference-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 28px;
+      padding-left: 20px;
+    }
+
+    .back-to-top {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 15;
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      background: rgba(14, 23, 42, .96);
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .back-to-top[hidden] { display: none; }
+
+    .back-to-top:hover { border-color: var(--agent-a); color: var(--text); }
+
+    @media (max-width: 1040px) {
+      .reading-canvas { padding-right: 36px; padding-left: 36px; }
+      .architecture-flow { padding: 20px; }
+      .architecture-chain { grid-template-columns: 1fr; }
+      .chain-arrow { min-height: 30px; }
+      .chain-arrow::before {
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 1px;
+        height: auto;
+      }
+      .chain-arrow::after {
+        top: auto;
+        right: auto;
+        bottom: 0;
+        left: calc(50% - 4px);
+        transform: rotate(135deg);
+      }
+      .delegation-lifecycle { grid-template-columns: repeat(2, 1fr); }
+      .delegation-lifecycle li::after { display: none; }
+    }
+
+    @media (max-width: 860px) {
+      html { scroll-padding-top: 76px; }
+      body { display: block; font-size: 16px; }
+      .chapter-rail { display: none; }
+      .mobile-chapter-nav {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: block;
+        margin-top: 0;
+        border-bottom: 1px solid var(--border);
+        background: rgba(8, 13, 26, .96);
+      }
+
+      .mobile-chapter-nav summary {
+        display: flex;
+        min-height: 52px;
+        align-items: center;
+        padding: 12px 18px;
+        color: var(--text);
+        font: 700 13px/1.2 var(--mono);
+        letter-spacing: .08em;
+      }
+
+      .mobile-chapter-nav nav {
+        display: flex;
+        gap: 4px;
+        overflow-x: auto;
+        padding: 0 14px 8px;
+        scrollbar-width: thin;
+      }
+
+      .mobile-chapter-nav .chapter-link {
+        display: inline-flex;
+        min-width: 44px;
+        min-height: 44px;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border: 1px solid transparent;
+        color: var(--muted);
+        font: 700 16px/1 var(--mono);
+        text-decoration: none;
+      }
+
+      .mobile-chapter-nav .chapter-link:hover,
+      .mobile-chapter-nav .chapter-link[aria-current="location"] {
+        border-color: var(--agent-a);
+        background: rgba(45, 212, 191, .1);
+        color: var(--text);
+      }
+
+      .reading-canvas {
+        width: 100%;
+        margin-left: 0;
+        padding: 52px 32px 88px;
+      }
+
+      .reading-canvas header > p:first-child,
+      .reading-canvas .content-label,
+      .reading-canvas table,
+      .reading-canvas .agent-node span,
+      .reading-canvas .flow-lane,
+      .reading-canvas .bridge-node,
+      .reading-canvas .process-node,
+      .reading-canvas .environment-components li,
+      .reading-canvas .context-control::before,
+      .reading-canvas .context-control span,
+      .reading-canvas .code-panel {
+        font-size: 16px;
+      }
+
+      .reading-canvas :not(pre) > code { font-size: 1em; }
+
+      header { margin-bottom: 72px; }
+      section { scroll-margin-top: 76px; margin-bottom: 76px; }
+      section + section { padding-top: 52px; }
+      .agent-node,
+      .bridge-node,
+      .process-node { min-height: 96px; }
+
+      .context-model { grid-template-columns: 1fr; }
+      .context-control { min-height: auto; }
+      .code-panel { overflow-x: auto; }
+      .reference-list { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .reading-canvas { padding: 40px 18px 72px; }
+      h1 { font-size: 38px; }
+      h2 { font-size: 28px; }
+      .conclusion-panel,
+      .architecture-flow { padding: 22px 18px; }
+      dl { grid-template-columns: 1fr; }
+      dt { padding-bottom: 0; border-bottom: 0; }
+      dd { padding-top: 4px; }
+      .delegation-lifecycle { grid-template-columns: 1fr; }
+      .delegation-lifecycle li { min-height: auto; }
+      .code-panel { padding: 20px 18px; }
+      .checklist-panel { padding: 20px 18px 20px 40px; }
+      .back-to-top { right: 18px; bottom: 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+
+    @page { size: A4 portrait; margin: 12mm; }
+
+    @media print {
+      .skip-link, .chapter-rail, .mobile-chapter-nav, .copy-button, .back-to-top { display: none !important; }
+      body { display: block; background: #fff; color: #111; font-size: 11pt; }
+      .reading-canvas { width: 100%; margin: 0; padding: 0; }
+      header, section, section + section { margin-bottom: 28pt; padding-top: 0; border-color: #aaa; }
+      h2, h3 { break-after: avoid; }
+      h1, h2, h3, caption, th, dfn { color: #111; }
+      header > p:first-child, .context-control::before, .delegation-lifecycle li::before { color: #111; }
+      p, li, dd, td, .context-control span, .delegation-lifecycle li { color: #222; }
+      .content-label.documented-behavior {
+        border-color: #1f3b82;
+        background: #fff;
+        color: #1f3b82;
+      }
+      .content-label.recommended-workflow {
+        border-color: #075b50;
+        background: #fff;
+        color: #075b50;
+      }
+      :not(pre) > code { border-color: #777; background: #f2f2f2; color: #111; }
+      li::marker { color: #111; }
+      .prohibition, .prohibition::marker { color: #7a1f1a; }
+      .conclusion-panel, .table-shell, .architecture-flow, .context-model, .context-control,
+      .agent-node, .bridge-node, .process-node, .agent-environment,
+      .delegation-lifecycle li, .code-panel, details, .checklist-panel {
+        border-color: #999;
+        background: #fff;
+        color: #111;
+        break-inside: avoid;
+      }
+      .table-shell { overflow: visible; }
+      .reading-canvas table {
+        width: 100%;
+        min-width: 0;
+        table-layout: fixed;
+        font-size: 7.5pt;
+        line-height: 1.35;
+      }
+      caption { padding: 7pt; }
+      th, td {
+        padding: 5pt;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+      .reading-canvas thead th { background: #f2f2f2; color: #111; }
+      .reading-canvas tbody th,
+      .reading-canvas tbody td { color: #222; }
+      .reading-canvas .inheritance-table tbody td:last-child { color: #222; }
+      .architecture-flow figcaption,
+      .agent-node strong,
+      .agent-node span,
+      .agent-environment > strong { color: #111; }
+      .flow-lane span { background: #fff; color: #111; }
+      .environment-components li { border-color: #bbb; background: #fff; color: #222; }
+      .environment-components code { color: #111; }
+      a { color: #111; text-decoration: underline; }
+      .code-panel { white-space: pre-wrap; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到正文</a>
+
+  <aside class="chapter-rail" aria-label="章节导航">
+    <nav aria-label="Codex Agent Atlas 章节">
+      <ol>
+        <li><a class="chapter-link" href="#quick-conclusion">01 快速结论</a></li>
+        <li><a class="chapter-link" href="#agent-session">02 Agent 与会话</a></li>
+        <li><a class="chapter-link" href="#subagent-context">03 子 Agent 上下文</a></li>
+        <li><a class="chapter-link" href="#inheritance">04 继承边界</a></li>
+        <li><a class="chapter-link" href="#cross-workspace">05 跨工作区协作</a></li>
+        <li><a class="chapter-link" href="#b-directs-a">06 B 指挥 A</a></li>
+        <li><a class="chapter-link" href="#mcp-config">07 MCP 配置</a></li>
+        <li><a class="chapter-link" href="#thread-continuity">08 线程续传</a></li>
+        <li><a class="chapter-link" href="#handoff">09 交接与验收</a></li>
+        <li><a class="chapter-link" href="#safety">10 安全检查</a></li>
+      </ol>
+    </nav>
+  </aside>
+
+  <details class="mobile-chapter-nav">
+    <summary>章节导航</summary>
+    <nav aria-label="移动端章节导航">
+      <a class="chapter-link" href="#quick-conclusion" aria-label="01 快速结论">01</a>
+      <a class="chapter-link" href="#agent-session" aria-label="02 Agent 与会话">02</a>
+      <a class="chapter-link" href="#subagent-context" aria-label="03 子 Agent 上下文">03</a>
+      <a class="chapter-link" href="#inheritance" aria-label="04 配置继承边界">04</a>
+      <a class="chapter-link" href="#cross-workspace" aria-label="05 跨工作区协作">05</a>
+      <a class="chapter-link" href="#b-directs-a" aria-label="06 Agent B 指挥 Agent A">06</a>
+      <a class="chapter-link" href="#mcp-config" aria-label="07 MCP 配置">07</a>
+      <a class="chapter-link" href="#thread-continuity" aria-label="08 线程续传">08</a>
+      <a class="chapter-link" href="#handoff" aria-label="09 交接与验收">09</a>
+      <a class="chapter-link" href="#safety" aria-label="10 安全检查">10</a>
+    </nav>
+  </details>
+
+  <main id="main-content" class="reading-canvas">
+    <header>
+      <p>CODEX AGENT ATLAS</p>
+      <h1>子 Agent 与跨工作区协作</h1>
+      <p>给需要在多个 Codex 环境之间协作、交接和复核的工程实践手册。</p>
+      <p><strong>标注约定：</strong><span class="content-label documented-behavior">已记录的 Codex 行为</span> 表示关于会话、配置或运行环境的事实说明；<span class="content-label recommended-workflow">推荐工作流</span> 表示本手册建议采用的工程做法。两类内容不会互相替代。</p>
+    </header>
+
+    <section id="quick-conclusion" class="conclusion-panel">
+      <h2>01. 快速结论</h2>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> <strong>不要复制 Agent A，而要调用一个真正运行在 A 环境中的 Codex 实例。</strong></p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 对话上下文独立，项目文件环境通常共享。一个名字、一个角色提示或一个子 Agent 标签，都不会把另一个工作区的项目说明、工具配置和会话自动装入当前 Agent。</p>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 把 B 设为协调者：B 分解任务、调用 A、验证结果并决定是否返工；A 在自己的工作目录、项目说明和必要的全局状态下完成执行。</p>
+    </section>
+
+    <section id="agent-session">
+      <h2>02. Agent 与会话</h2>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> <dfn>Agent</dfn> 是角色和运行环境的组合：有效工作目录、项目 <code>AGENTS.md</code>、配置、技能、权限和可用工具共同决定它如何工作。<dfn>会话</dfn>则是一条可续传的对话线程，保存此前的消息和该线程的任务脉络。</p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 不能把“我是 Agent A”理解为“我已经进入 A 的环境”。同一个角色可在多个线程中运行；同一个线程也不会因为改名而迁移到另一工作区。</p>
+      <dl>
+        <dt>角色配置</dt><dd>定义执行时可用的环境与规则。</dd>
+        <dt>会话线程</dt><dd>以 <code>threadId</code> 标识，用于在同一对话脉络上继续追问。</dd>
+        <dt>工作区</dt><dd>项目文件、项目级指令和通常的版本控制边界所在位置。</dd>
+      </dl>
+    </section>
+
+    <section id="subagent-context">
+      <h2>03. 子 Agent 上下文</h2>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 普通子 Agent 使用独立的 Agent 线程与上下文窗口。父 Agent 可在启动时传递任务、背景和验收条件，但子 Agent 不会自动看到父线程的全部逐字记录；同级子 Agent 之间也彼此隔离。</p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 这不等于文件系统一定隔离：在同一 checkout 中运行的多个 Agent 可能读写同一项目文件。共享文件访问不能推导出共享对话上下文，反之亦然。并发修改同一文件仍会产生覆盖或合并冲突。</p>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 启动子 Agent 时，把它完成任务所必需的上下文显式写入任务说明，包括目标、文件范围、禁止事项、验证命令和回传格式。</p>
+    </section>
+
+    <section id="inheritance">
+      <h2>04. 配置继承边界</h2>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 下表前两列说明会话与环境边界；实际生效内容取决于启动方式、有效工作目录与受信任的项目配置。<span class="content-label recommended-workflow">推荐工作流</span> 最后一列给出相应的工程做法，而不是“所有配置都会复制”的承诺。</p>
+      <div class="table-shell">
+        <table class="inheritance-table">
+          <caption>普通子 Agent 与独立 A 进程的边界</caption>
+          <thead><tr><th scope="col">项目</th><th scope="col">已记录的 Codex 行为：普通子 Agent</th><th scope="col">已记录的 Codex 行为：独立 A Codex 进程</th><th scope="col">推荐工作流</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">指令</th><td>默认从父级继承，除非覆盖</td><td>由 A 的有效 <code>cwd</code> 与项目配置决定</td><td>不要用名称假定会加载 A 的 <code>AGENTS.md</code>。</td></tr>
+            <tr><th scope="row">模型与推理强度</th><td>默认从父级继承，除非覆盖</td><td>由子角色或启动配置决定</td><td>在任务合同中明确需要的能力与限制。</td></tr>
+            <tr><th scope="row">Sandbox 与审批</th><td>默认从父级继承，除非覆盖</td><td>由 A 的进程/调用参数决定；<code>approval-policy = "never"</code> 不会额外授予权限</td><td>按最小权限设计调用边界。</td></tr>
+            <tr><th scope="row">技能</th><td>默认从父级继承，除非覆盖</td><td>由子角色配置及 A 项目决定</td><td>项目技能依赖有效工作目录和受信任配置。</td></tr>
+            <tr><th scope="row">MCP</th><td>默认从父级继承，除非覆盖</td><td>由 A 的配置决定</td><td>把 A 作为 MCP 服务调用可保留 A 的工具边界。</td></tr>
+            <tr><th scope="row">Memories</th><td>默认不独立命名空间</td><td>只有不同的 <code>CODEX_HOME</code> 才会创建独立的持久 memory 存储；单独进程若共享同一 <code>CODEX_HOME</code>，仍共享 memories</td><td>需要持久记忆隔离时，为 A 使用不同的 <code>CODEX_HOME</code>；不要把独立进程或不同工作区当作记忆隔离。</td></tr>
+            <tr><th scope="row">工作目录</th><td>共享运行时资源或由启动参数指定</td><td>由 A 的 <code>cwd</code> 指定</td><td><code>cwd</code> 决定项目上下文与文件作用域。</td></tr>
+            <tr><th scope="row">文件系统变更</th><td>共享运行时资源</td><td>取决于 checkout 是否相同</td><td>独立对话不防止同一 checkout 的写入冲突。</td></tr>
+            <tr><th scope="row">转录历史</th><td>独立线程状态</td><td>独立线程状态，以 <code>threadId</code> 续传；旧 transcript 不等于技能、项目配置或生成的 memories</td><td>用任务合同保存续传所需标识，不把旧线程当作环境配置。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="cross-workspace">
+      <h2>05. 跨工作区协作</h2>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 选择结构前先分清：谁拥有最终决策、谁能写哪些文件、以及结果如何被复核。</p>
+      <div class="table-shell">
+        <table>
+          <caption><span class="content-label recommended-workflow">推荐工作流</span> 按任务边界选择协作模式</caption>
+          <thead><tr><th scope="col">模式</th><th scope="col">适用场景</th><th scope="col">优点</th><th scope="col">风险与补偿</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">共享父工作区</th><td>小任务、同一项目</td><td>交接成本低</td><td>写入冲突高；分配互斥文件范围。</td></tr>
+            <tr><th scope="row">独立会话、人工转述</th><td>探索或人工审查</td><td>边界清晰、启动简单</td><td>信息可能丢失；使用结构化交接合同。</td></tr>
+            <tr><th scope="row">自动协调者调用执行者</th><td>可重复的跨工作区任务</td><td>B 可复核、返工并保留 A 的环境</td><td>需配置 MCP、超时和信任边界；这是推荐模式。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 只创建新会话不能隔离磁盘写入。<span class="content-label recommended-workflow">推荐工作流</span> 若需要真正隔离文件改动，请使用不同 checkout（例如 worktree）。</p>
+    </section>
+
+    <section id="b-directs-a">
+      <h2>06. Agent B 指挥 Agent A</h2>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> B 是监督者，A 是在独立环境中执行的 Codex 实例。B 不复制 A 的配置；B 通过 A 的 MCP 服务发送有边界的任务并读取回传。</p>
+      <figure class="architecture-flow" aria-labelledby="architecture-caption">
+        <figcaption id="architecture-caption">B 调用独立 A 环境的主架构</figcaption>
+        <div class="flow-lanes" aria-label="闭环中的控制流与结果流">
+          <div class="flow-lane flow-lane--control"><span>控制流：Agent B → Agent A · codex / codex-reply</span></div>
+          <div class="flow-lane flow-lane--result"><span>结果流：Agent A → Agent B · content / threadId</span></div>
+        </div>
+        <div class="architecture-chain" aria-label="Agent B 到 Agent A 环境的调用链">
+          <div class="agent-node agent-node--b"><strong>Agent B</strong><span>监督者·拆解·验收</span></div>
+          <div class="chain-arrow" aria-hidden="true"></div>
+          <div class="bridge-node">Agent A<br>MCP server</div>
+          <div class="chain-arrow" aria-hidden="true"></div>
+          <div class="process-node">独立 Codex 进程</div>
+          <div class="chain-arrow" aria-hidden="true"></div>
+          <div class="agent-environment">
+            <strong>Agent A 环境</strong>
+            <ul class="environment-components" aria-label="Agent A 环境内的组件">
+              <li><code>cwd = workspace-A</code></li>
+              <li><code>CODEX_HOME = codex-home-A</code></li>
+              <li>项目 <code>AGENTS.md</code> 与 <code>.codex/config.toml</code></li>
+              <li>A 的 skills 与 MCP servers</li>
+              <li>A 的 memory store</li>
+              <li>由 <code>threadId</code> 标识的 A 线程</li>
+            </ul>
+          </div>
+        </div>
+      </figure>
+      <div class="context-model" aria-label="cwd、CODEX_HOME 与 threadId 的职责边界">
+        <div class="context-control" data-axis="PROJECT"><strong>cwd</strong><span>选择项目上下文、项目指令与文件作用域</span></div>
+        <div class="context-control" data-axis="GLOBAL STATE"><strong>CODEX_HOME</strong><span>选择配置、技能与 memories 等全局状态</span></div>
+        <div class="context-control" data-axis="CONVERSATION"><strong>threadId</strong><span>标识会话线程，承接同一任务的定向反馈</span></div>
+      </div>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 将任务闭环执行为：</p>
+      <ol class="delegation-lifecycle" aria-label="从委派到集成的四步生命周期">
+        <li>B 分解任务，明确 A 的文件范围与验收标准。</li>
+        <li>B 调用 <code>codex(prompt, cwd=A)</code>，A 执行并回传内容和 <code>threadId</code>。</li>
+        <li>B 验证结果；需要调整时用 <code>codex-reply(threadId, feedback)</code> 定向返工。</li>
+        <li>B 接受合格输出并集成，保留验证证据。</li>
+      </ol>
+      <pre class="copy-block code-panel" aria-label="B 的 AGENTS.md 监督者指令"><code># B 的监督者职责
+
+将 Agent A 视为独立执行环境：不要假设 A 继承 B 的项目配置或旧会话。
+每次委派须给出目标、文件范围、禁止事项、验收命令和回传合同。
+先验证 A 的 deliverables 与 verification；未达标时只用 threadId 发出有界反馈。
+不得把凭据、令牌、二维码或不必要的私人上下文放进任务提示。</code><button class="copy-button" type="button" aria-label="复制这段配置" onclick="copyText(this)">复制</button></pre>
+    </section>
+
+    <section id="mcp-config">
+      <h2>07. MCP 配置</h2>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 在 B 的 <code>.codex/config.toml</code> 中注册 A 的 MCP 服务。先用基线配置选择 A 的项目环境；它不设置 <code>CODEX_HOME</code>，因此不提供持久 memory 隔离。</p>
+      <pre class="copy-block code-panel" aria-label="Agent A MCP 基线配置"><code>[mcp_servers.agent_a]
+command = "codex"
+args = ["mcp-server"]
+cwd = "/absolute/path/to/workspace-A"
+startup_timeout_sec = 20
+tool_timeout_sec = 3600
+required = true</code><button class="copy-button" type="button" aria-label="复制这段配置" onclick="copyText(this)">复制</button></pre>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 需要将 A 的持久记忆、用户级配置与 B 隔离时，使用下面的独立 <code>CODEX_HOME</code> 变体。占位目录必须事先存在，并有意配置好 A 实际需要的 config、认证与 skills；不要盲目复制 B 的全部状态，也不要把凭据写入本页或版本库。</p>
+      <pre class="copy-block code-panel" aria-label="Agent A MCP 独立 CODEX_HOME 配置"><code>[mcp_servers.agent_a]
+command = "codex"
+args = ["mcp-server"]
+cwd = "/absolute/path/to/workspace-A"
+env = { CODEX_HOME = "/absolute/path/to/codex-home-A" }
+startup_timeout_sec = 20
+tool_timeout_sec = 3600
+required = true</code><button class="copy-button" type="button" aria-label="复制这段配置" onclick="copyText(this)">复制</button></pre>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> <code>cwd</code> 选择 A 的项目环境；<code>CODEX_HOME</code> 选择 A 的全局状态（包括本地 memories 的位置）。两者负责不同维度，不能相互替代。独立进程如果共享同一 <code>CODEX_HOME</code>，持久 memories 仍然共享。</p>
+      <pre class="copy-block code-panel" aria-label="首次 codex 请求"><code>codex({
+  prompt: "在 workspace-A 中实现已批准的任务；只修改任务合同列出的文件，并回传结果合同。",
+  cwd: "/absolute/path/to/workspace-A",
+  sandbox: "workspace-write",
+  "approval-policy": "on-request"
+})</code><button class="copy-button" type="button" aria-label="复制这段配置" onclick="copyText(this)">复制</button></pre>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 选择最小必要权限，并在 B 中限制工具暴露。<span class="content-label documented-behavior">已记录的 Codex 行为</span> 即使审批策略为 <code>never</code>，它也只是改变审批行为，绝不增加 sandbox 或系统权限。</p>
+    </section>
+
+    <section id="thread-continuity">
+      <h2>08. 线程续传</h2>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> 首次 <code>codex</code> 调用创建 A 的会话并返回 <code>threadId</code>。<span class="content-label recommended-workflow">推荐工作流</span> 将该标识与任务合同一起保存；B 对同一任务的后续反馈用 <code>codex-reply</code> 发回相同线程，从而保留该次执行的对话脉络。</p>
+      <p><span class="content-label documented-behavior">已记录的 Codex 行为</span> <strong>cwd 决定项目上下文，CODEX_HOME 决定全局状态，threadId 决定会话续传。</strong>其中任何一个都不能替代另外两个。持久配置或 memory 可以影响未来启动，但它们不是一条旧对话 transcript。</p>
+      <pre class="copy-block code-panel" aria-label="codex-reply 续传请求"><code>codex-reply({
+  threadId: "returned-thread-id",
+  prompt: "验收未通过：请仅修复第 2 项，重新运行 npm test，并按结果合同回传。"
+})</code><button class="copy-button" type="button" aria-label="复制这段配置" onclick="copyText(this)">复制</button></pre>
+      <details>
+        <summary>何时不要续传旧线程？</summary>
+        <p><span class="content-label recommended-workflow">推荐工作流</span> 当任务目标、权限范围或受信任项目发生实质变化时，创建新任务和新线程更可审计；不要借助旧上下文绕过新的边界。</p>
+      </details>
+    </section>
+
+    <section id="handoff">
+      <h2>09. 交接与验收</h2>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 交接应是结构化接口，不是“完成了”的一句话。B 先给 A 任务合同，再根据结果合同验收；返工也必须带范围，避免一次反馈扩张成无边界重做。</p>
+      <pre class="copy-block code-panel" aria-label="任务合同模板"><code>任务：&lt;明确目标&gt;
+工作目录：/absolute/path/to/workspace-A
+允许修改：&lt;文件或目录列表&gt;
+禁止修改：&lt;边界列表&gt;
+验收：&lt;命令与预期结果&gt;
+回传：按结果合同提供状态、交付物、验证、阻塞项和下一步。</code><button class="copy-button" type="button" aria-label="复制这段配置" onclick="copyText(this)">复制</button></pre>
+      <pre class="copy-block code-panel" aria-label="A 的结果合同"><code>status: DONE | DONE_WITH_CONCERNS | BLOCKED
+deliverables:
+  - &lt;变更的文件或产物&gt;
+verification:
+  - command: &lt;执行过的命令&gt;
+    result: &lt;精确结果&gt;
+blockers:
+  - &lt;无则写 none&gt;
+next_action: &lt;B 应执行的下一步&gt;</code><button class="copy-button" type="button" aria-label="复制这段配置" onclick="copyText(this)">复制</button></pre>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 验收顺序：检查文件范围与提交差异；运行合同中的验证；审阅风险和阻塞项；仅对未达标项发送 <code>threadId</code> 返工；最后再由 B 集成已接受输出。</p>
+    </section>
+
+    <section id="safety">
+      <h2>10. 安全检查</h2>
+      <p><span class="content-label recommended-workflow">推荐工作流</span> 将下列项目作为每次委派和集成前的检查清单：</p>
+      <ul class="checklist-panel">
+        <li>为每个执行者指定最小权限、明确 <code>cwd</code> 和可写文件范围。</li>
+        <li class="prohibition">不在配置、提示、日志或交接物中放入凭据、令牌、二维码或机器专属秘密。</li>
+        <li>同一 checkout 的并发写入要么串行化，要么按互斥文件范围拆分；需要隔离时使用独立 worktree。</li>
+        <li>不要把共享文件系统误解成共享 memories 或共享对话；检查 <code>CODEX_HOME</code> 是否需要隔离。</li>
+        <li>把 MCP 服务、项目指令和外部工具视为信任边界；只连接可信配置并审阅其权限。</li>
+        <li>设置启动与工具超时，记录 <code>threadId</code>、命令和验证结果，避免静默卡住或不可追溯的返工。</li>
+        <li>接受输出前独立验证；A 的“完成”是待验证结果，不是 B 的最终结论。</li>
+      </ul>
+      <h3>官方参考</h3>
+      <ul class="reference-list">
+        <li><a href="https://learn.chatgpt.com/docs/agent-configuration/subagents">Subagents</a></li>
+        <li><a href="https://learn.chatgpt.com/docs/mcp-server">MCP Server</a></li>
+        <li><a href="https://learn.chatgpt.com/docs/customization/memories">Memories</a></li>
+        <li><a href="https://learn.chatgpt.com/docs/environments/git-worktrees">Git Worktrees</a></li>
+        <li><a href="https://learn.chatgpt.com/docs/developer-commands?surface=cli">Developer commands</a></li>
+        <li><a href="https://learn.chatgpt.com/docs/config-file/config-advanced#config-and-state-locations">Config and state locations</a></li>
+      </ul>
+    </section>
+  </main>
+  <a class="back-to-top" href="#main-content" hidden>回到开头</a>
+  <p id="copy-status" class="copy-status" aria-live="polite" aria-atomic="true"></p>
+  <script>
+    const copyStatus = document.getElementById('copy-status');
+    const backToTop = document.querySelector('.back-to-top');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function setCopyFeedback(button, message) {
+      const originalLabel = '复制这段配置';
+      button.textContent = message;
+      button.setAttribute('aria-label', message);
+      copyStatus.textContent = message;
+      window.clearTimeout(button.copyFeedbackTimer);
+      button.copyFeedbackTimer = window.setTimeout(() => {
+        button.textContent = '复制';
+        button.setAttribute('aria-label', originalLabel);
+        copyStatus.textContent = '';
+      }, 1500);
+    }
+
+    function copyText(button) {
+      const code = button.closest('.copy-block')?.querySelector('code');
+      if (!code) return;
+
+      const text = code.textContent;
+      const copyWithSelection = () => {
+        const range = document.createRange();
+        const selection = window.getSelection();
+        range.selectNodeContents(code);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        let copied = false;
+        try {
+          copied = document.execCommand('copy');
+        } finally {
+          selection.removeAllRanges();
+        }
+        setCopyFeedback(button, copied ? '已复制' : '复制失败');
+      };
+
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(text)
+          .then(() => setCopyFeedback(button, '已复制'))
+          .catch(copyWithSelection);
+      } else {
+        copyWithSelection();
+      }
+    }
+
+    function setActiveSection(sectionId) {
+      document.querySelectorAll('.chapter-link').forEach((link) => {
+        const isCurrent = link.getAttribute('href') === `#${sectionId}`;
+        link.toggleAttribute('aria-current', isCurrent);
+        if (isCurrent) link.setAttribute('aria-current', 'location');
+      });
+    }
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      const current = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((first, second) => first.boundingClientRect.top - second.boundingClientRect.top)[0];
+      if (current) setActiveSection(current.target.id);
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+
+    document.querySelectorAll('main section').forEach((section) => sectionObserver.observe(section));
+
+    document.querySelectorAll('.chapter-link').forEach((link) => {
+      link.addEventListener('click', () => {
+        setActiveSection(link.hash.slice(1));
+        link.closest('.mobile-chapter-nav')?.removeAttribute('open');
+      });
+    });
+
+    function updateBackToTopVisibility() {
+      backToTop.hidden = window.scrollY <= 720;
+    }
+
+    window.addEventListener('scroll', updateBackToTopVisibility, { passive: true });
+    updateBackToTopVisibility();
+
+    backToTop.addEventListener('click', (event) => {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' });
+    });
+  </script>
+</body>
+</html>
